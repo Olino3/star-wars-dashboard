@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galactic Command Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Screensaver Layer -->
+    <div id="screensaver" class="screensaver">
+        <canvas id="hyperspace-canvas"></canvas>
+        <div class="screensaver-text">GALACTIC COMMAND DASHBOARD</div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Scanline Overlay Effect -->
+        <div class="scanline-overlay"></div>
+        <div class="crt-flicker"></div>
+
+        <!-- Top Header Bar -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">⬡</span>
+                    <span class="logo-text">GALACTIC COMMAND</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div id="chronometer" class="chronometer">
+                    <div class="chronometer-label">GALACTIC STANDARD TIME</div>
+                    <div id="galactic-time" class="galactic-time">GS 2024:365:23:59</div>
+                    <div id="earth-time" class="earth-time">2024-12-31 23:59:59</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>ALL SYSTEMS OPERATIONAL</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid (Optimized for Curved/Ultra-wide) -->
+        <main class="main-grid">
+            <!-- Left Column: System Diagnostics -->
+            <section class="left-panel">
+                <div class="panel system-panel">
+                    <h2 class="panel-title">⚡ REACTOR CORE STATUS</h2>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Temperature</div>
+                        <div id="reactor-temp" class="diag-value">42.0°C</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Stability</div>
+                        <div class="diag-bar">
+                            <div id="reactor-stability-bar" class="diag-bar-fill" style="width: 85%"></div>
+                        </div>
+                        <div id="reactor-stability" class="diag-value">85%</div>
+                    </div>
+                    <div id="reactor-status" class="status-badge optimal">OPTIMAL</div>
+                </div>
+
+                <div class="panel system-panel">
+                    <h2 class="panel-title">💾 MEMORY BANKS</h2>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Integrity</div>
+                        <div class="diag-bar">
+                            <div id="memory-integrity-bar" class="diag-bar-fill" style="width: 75%"></div>
+                        </div>
+                        <div id="memory-integrity" class="diag-value">75%</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Usage</div>
+                        <div id="memory-usage" class="diag-value">2.4 / 4.0 GB</div>
+                    </div>
+                    <div id="memory-status" class="status-badge nominal">NOMINAL</div>
+                </div>
+
+                <div class="panel system-panel">
+                    <h2 class="panel-title">💿 STORAGE SYSTEMS</h2>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Capacity</div>
+                        <div class="diag-bar">
+                            <div id="storage-capacity-bar" class="diag-bar-fill" style="width: 60%"></div>
+                        </div>
+                        <div id="storage-capacity" class="diag-value">60%</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Available</div>
+                        <div id="storage-usage" class="diag-value">12.5 / 32.0 GB</div>
+                    </div>
+                    <div id="storage-status" class="status-badge nominal">NOMINAL</div>
+                </div>
+            </section>
+
+            <!-- Center Column: Screensaver/News Feed -->
+            <section class="center-panel">
+                <div class="panel news-panel">
+                    <h2 class="panel-title">📡 HOLONET NEWS FEED</h2>
+                    <div id="news-feed" class="news-feed">
+                        <!-- News items will be injected here -->
+                        <div class="news-item">
+                            <div class="news-title">Loading HoloNet transmission...</div>
+                            <div class="news-meta">
+                                <span class="news-source">Galactic Command</span>
+                                <span class="news-time">Now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel bounty-panel">
+                    <h2 class="panel-title">🎯 BOUNTY HUNTER TRACKING</h2>
+                    <div class="bounty-controls">
+                        <button id="scan-button" class="scan-button">INITIATE SCAN</button>
+                        <div id="scan-status" class="scan-status">Scanner Ready</div>
+                    </div>
+                    <div id="bounty-results" class="bounty-results">
+                        <div class="bounty-placeholder">
+                            <p>⚠ AWAITING SCAN INITIATION</p>
+                            <p class="small">Click "INITIATE SCAN" to detect nearby targets</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Weather/Atmospheric Data -->
+            <section class="right-panel">
+                <div class="panel weather-panel">
+                    <h2 class="panel-title">🌍 ATMOSPHERIC DATA</h2>
+                    <div id="weather-location" class="weather-location">Coruscant Sector</div>
+                    <div class="weather-main">
+                        <div id="weather-temp" class="weather-temp">22°C</div>
+                        <div id="weather-desc" class="weather-desc">Partly Cloudy</div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-detail-item">
+                            <span class="detail-label">Feels Like</span>
+                            <span id="feels-like" class="detail-value">21°C</span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span class="detail-label">Humidity</span>
+                            <span id="humidity" class="detail-value">65%</span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span class="detail-label">Wind Speed</span>
+                            <span id="wind-speed" class="detail-value">15.5 km/h</span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span class="detail-label">Visibility</span>
+                            <span id="visibility" class="detail-value">10.0 km</span>
+                        </div>
+                    </div>
+                    <div id="atmospheric-status" class="status-badge optimal">ATMOSPHERIC CLARITY OPTIMAL</div>
+                </div>
+
+                <div class="panel info-panel">
+                    <h2 class="panel-title">ℹ️ MISSION BRIEFING</h2>
+                    <div class="mission-text">
+                        <p><strong>Objective:</strong> Monitor all systems across the Galactic Empire.</p>
+                        <p><strong>Priority:</strong> Maintain operational readiness at all times.</p>
+                        <p><strong>Commander:</strong> You are in command of this tactical station.</p>
+                        <hr class="divider">
+                        <p class="small">May the Force be with you, Commander.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-left">
+                <span>Galactic Empire Tactical Operations</span>
+            </div>
+            <div class="footer-center">
+                <span id="last-update">Last Update: --:--:--</span>
+            </div>
+            <div class="footer-right">
+                <span>Powered by Raspberry Pi</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/screensaver.js"></script>
+    <script src="js/bounty_tracker.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

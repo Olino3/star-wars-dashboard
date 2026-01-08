@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Galactic Command Dashboard
+Comment=Launch dashboard in kiosk mode
+Exec=/home/pi/star-wars-dashboard/config/launch-kiosk.sh
+Terminal=false
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
