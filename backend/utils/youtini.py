@@ -34,6 +34,9 @@ REQUEST_TIMEOUT = 10
 MAX_RETRIES = 4
 BACKOFF_DELAYS = [1, 2, 4, 8]  # seconds
 
+# Article parsing configuration
+MAX_PARENT_TRAVERSAL_DEPTH = 8  # Maximum levels to traverse up DOM tree for date/category
+
 
 def get_relative_time(date_str):
     """
@@ -216,7 +219,7 @@ def parse_articles(html_content, limit=5):
             
             # Navigate up to find the article container
             parent = link.parent
-            for _ in range(8):  # Look up to 8 levels for date/category
+            for _ in range(MAX_PARENT_TRAVERSAL_DEPTH):
                 if parent is None:
                     break
                     
