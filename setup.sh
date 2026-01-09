@@ -35,10 +35,20 @@ sudo apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
-    chromium-browser \
     unclutter \
     x11-xserver-utils \
     git
+
+# Install Chromium (try 'chromium' first, then 'chromium-browser' as fallback)
+echo "📦 Installing Chromium browser..."
+if apt-cache show chromium > /dev/null 2>&1; then
+    sudo apt-get install -y chromium
+elif apt-cache show chromium-browser > /dev/null 2>&1; then
+    sudo apt-get install -y chromium-browser
+else
+    echo "⚠️  WARNING: Could not find chromium or chromium-browser package."
+    echo "   Please install Chromium manually."
+fi
 
 # Create virtual environment
 echo "🐍 Setting up Python virtual environment..."
@@ -133,8 +143,18 @@ while ! curl -s http://localhost:5000/health > /dev/null; do
     sleep 2
 done
 
+# Detect Chromium binary (chromium or chromium-browser)
+if command -v chromium &> /dev/null; then
+    CHROMIUM_BIN="chromium"
+elif command -v chromium-browser &> /dev/null; then
+    CHROMIUM_BIN="chromium-browser"
+else
+    echo "ERROR: Chromium not found. Please install chromium or chromium-browser."
+    exit 1
+fi
+
 # Launch Chromium in kiosk mode
-chromium-browser \
+$CHROMIUM_BIN \
     --kiosk \
     --noerrdialogs \
     --disable-infobars \
@@ -231,7 +251,7 @@ echo ""
 echo "Next steps:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "1. Test the dashboard now:"
-echo "   chromium-browser http://localhost:5000"
+echo "   chromium http://localhost:5000  (or chromium-browser on older systems)"
 echo ""
 echo "2. Enable kiosk mode on boot (optional):"
 echo "   The dashboard will auto-start in kiosk mode on next boot."

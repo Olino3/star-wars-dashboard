@@ -170,8 +170,8 @@ ls -lh backend/data/stations.db
 ### Kiosk mode issues
 
 ```bash
-# Check if Chromium is installed
-which chromium-browser
+# Check if Chromium is installed (try both names)
+which chromium || which chromium-browser
 
 # Check autostart file
 cat ~/.config/autostart/kuat-systems-dashboard.desktop

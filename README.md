@@ -72,6 +72,8 @@ The installer will:
 
 ```bash
 # The service should auto-start, but you can test it manually:
+chromium http://localhost:5000
+# Or on older systems:
 chromium-browser http://localhost:5000
 ```
 
