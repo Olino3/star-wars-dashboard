@@ -85,6 +85,28 @@ sudo reboot
 
 The dashboard will launch full-screen on startup.
 
+## 🗑️ Uninstallation
+
+To remove the dashboard autostart, kiosk mode, and systemd service:
+
+```bash
+chmod +x uninstall.sh
+./uninstall.sh
+```
+
+The uninstaller will:
+- Stop and disable the systemd service
+- Remove the autostart desktop entry
+- Remove the kiosk launcher script
+- Optionally remove the Python virtual environment
+- Optionally remove your `.env` configuration
+
+**Note:** Project files are preserved by default. To completely remove the dashboard:
+
+```bash
+rm -rf ~/star-wars-dashboard
+```
+
 ## ⚙️ Configuration
 
 ### Weather API (Optional but Recommended)
@@ -224,6 +246,7 @@ star-wars-dashboard/
 │   ├── autostart.desktop     # Autostart configuration
 │   └── launch-kiosk.sh       # Kiosk mode launcher (created by setup.sh)
 ├── setup.sh                  # Installation script
+├── uninstall.sh              # Uninstallation script
 ├── run-dev.sh                # Development server launcher
 └── README.md                 # This file
 ```

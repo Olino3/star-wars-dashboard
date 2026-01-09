@@ -148,73 +148,76 @@ EOF
 
 chmod +x "$INSTALL_DIR/config/launch-kiosk.sh"
 
-# Optional: Configure weather API key
+# Environment Configuration
 echo ""
-echo "🌍 Weather Configuration (Optional)"
+echo "⚙️  Environment Configuration"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "To get real weather data, you need an OpenWeatherMap API key."
-echo "Get one free at: https://openweathermap.org/api"
-echo ""
-read -p "Do you want to configure weather now? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    read -p "Enter your OpenWeatherMap API key: " API_KEY
-    read -p "Enter your location (e.g., London, New York): " LOCATION
+
+CONFIGURE_ENV=false
+
+if [ -f "$INSTALL_DIR/.env" ]; then
+    echo "✅ Existing .env file found!"
+    read -p "Do you want to reconfigure the environment variables? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        CONFIGURE_ENV=true
+    fi
+else
+    echo "No .env file found. Let's configure your environment variables."
+    CONFIGURE_ENV=true
+fi
+
+if [ "$CONFIGURE_ENV" = true ]; then
+    echo ""
+    echo "🌍 Weather Configuration"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "To get real weather data, you need an OpenWeatherMap API key."
+    echo "Get one free at: https://openweathermap.org/api"
+    echo "(Press Enter to skip and use mock data)"
+    echo ""
+    read -p "Enter your OpenWeatherMap API key: " OPENWEATHER_API_KEY
+    read -p "Enter your weather location (e.g., London, New York): " WEATHER_LOCATION
+
+    echo ""
+    echo "🚇 Subway/Transit Configuration"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "Configure your nearest subway station for real-time arrival times."
+    echo "For NYC, find station IDs at: http://web.mta.info/developers/data/nyct/subway/Stations.csv"
+    echo "(Press Enter to skip and use mock data)"
+    echo ""
+    read -p "Enter subway city (e.g., NYC): " SUBWAY_CITY
+    read -p "Enter subway station ID (e.g., D17 for 7th Ave-53rd St, 65 for Grand Central): " SUBWAY_STATION_ID
+
+    echo ""
+    echo "📺 YouTube Configuration"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "To display YouTube feed data, you need a YouTube Data API v3 key."
+    echo "Get one at: https://console.cloud.google.com/apis/credentials"
+    echo "(Press Enter to skip)"
+    echo ""
+    read -p "Enter your YouTube API key: " YOUTUBE_API_KEY
 
     # Create environment file
     cat > "$INSTALL_DIR/.env" <<EOF
-OPENWEATHER_API_KEY=$API_KEY
-WEATHER_LOCATION=$LOCATION
+OPENWEATHER_API_KEY=$OPENWEATHER_API_KEY
+WEATHER_LOCATION="$WEATHER_LOCATION"
+SUBWAY_CITY=$SUBWAY_CITY
+SUBWAY_STATION_ID=$SUBWAY_STATION_ID
+YOUTUBE_API_KEY=$YOUTUBE_API_KEY
 EOF
 
-    # Update systemd service to use .env file
-    sudo sed -i '/\[Service\]/a EnvironmentFile='$INSTALL_DIR'/.env' /etc/systemd/system/kuat-systems-dashboard.service
-    sudo systemctl daemon-reload
-    sudo systemctl restart kuat-systems-dashboard.service
-
-    echo "✅ Weather configuration saved!"
-else
-    echo "ℹ️  Skipping weather configuration. Dashboard will use mock data."
-fi
-
-# Optional: Configure subway/transit times
-echo ""
-echo "🚇 NYC Subway Configuration (Optional)"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Configure your nearest NYC subway station for real-time arrival times."
-echo "Note: MTA API no longer requires an API key!"
-echo ""
-read -p "Do you want to configure NYC subway times? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo ""
-    echo "Enter your subway station ID (e.g., D17 for 7th Ave-53rd St, A42 for Port Authority)"
-    echo "Find station IDs at: http://web.mta.info/developers/data/nyct/subway/Stations.csv"
-    read -p "Station ID: " STATION_ID
-
-    # Append to environment file or create if it doesn't exist
-    if [ -f "$INSTALL_DIR/.env" ]; then
-        # Append to existing .env
-        cat >> "$INSTALL_DIR/.env" <<EOF
-SUBWAY_CITY=NYC
-SUBWAY_STATION_ID=$STATION_ID
-EOF
-    else
-        # Create new .env file
-        cat > "$INSTALL_DIR/.env" <<EOF
-SUBWAY_CITY=NYC
-SUBWAY_STATION_ID=$STATION_ID
-EOF
-        # Update systemd service to use .env file
+    # Update systemd service to use .env file if not already configured
+    if ! grep -q "EnvironmentFile" /etc/systemd/system/kuat-systems-dashboard.service 2>/dev/null; then
         sudo sed -i '/\[Service\]/a EnvironmentFile='$INSTALL_DIR'/.env' /etc/systemd/system/kuat-systems-dashboard.service
     fi
 
     sudo systemctl daemon-reload
     sudo systemctl restart kuat-systems-dashboard.service
 
-    echo "✅ Subway configuration saved!"
+    echo ""
+    echo "✅ Environment configuration saved to .env!"
 else
-    echo "ℹ️  Skipping subway configuration. Dashboard will show mock data."
+    echo "ℹ️  Keeping existing .env configuration."
 fi
 
 # Final instructions
