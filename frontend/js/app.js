@@ -215,8 +215,14 @@ class KuatSystemsDashboard {
                 data.data.forEach(item => {
                     const newsItem = document.createElement('div');
                     newsItem.className = 'news-item fade-in';
+                    
+                    // Create title with optional link
+                    const titleHtml = item.url 
+                        ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="news-link">${item.title}</a>`
+                        : item.title;
+                    
                     newsItem.innerHTML = `
-                        <div class="news-title">${item.title}</div>
+                        <div class="news-title">${titleHtml}</div>
                         <div class="news-meta">
                             <span class="news-source">${item.source}</span>
                             <span class="news-time">${item.time}</span>

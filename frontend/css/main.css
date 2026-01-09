@@ -430,6 +430,22 @@ html, body {
     line-height: 1.4;
 }
 
+.news-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+.news-link:hover {
+    color: var(--imperial-blue);
+    text-shadow: 0 0 8px var(--imperial-blue-glow);
+}
+
+.news-link:active {
+    color: var(--imperial-green);
+}
+
 .news-meta {
     display: flex;
     justify-content: space-between;

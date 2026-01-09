@@ -10,6 +10,7 @@ import random
 from utils.system_stats import get_system_stats
 from utils.weather import get_weather_data, get_galactic_date
 from utils.subway import get_subway_data
+from utils.youtini import get_youtini_articles
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
@@ -109,37 +110,10 @@ def api_bounty_scan():
 def api_news():
     """
     Holonet News Feed
-    Returns mock news items (could be extended with RSS parsing)
+    Fetches latest Star Wars book/comic news from Youtini
     """
     try:
-        news_items = [
-            {
-                "title": "Imperial Fleet Reports Increased Rebel Activity in Outer Rim",
-                "source": "Imperial HoloNet News",
-                "time": "2 hours ago"
-            },
-            {
-                "title": "New TIE Fighter Prototype Exceeds Performance Expectations",
-                "source": "Imperial Engineering Corps",
-                "time": "5 hours ago"
-            },
-            {
-                "title": "Death Star II Construction Ahead of Schedule",
-                "source": "Imperial Command",
-                "time": "8 hours ago"
-            },
-            {
-                "title": "Mandalorian Sightings on Tatooine Investigated",
-                "source": "Bounty Hunters Guild",
-                "time": "12 hours ago"
-            },
-            {
-                "title": "Trade Routes Through Hyperspace Lane 7 Temporarily Closed",
-                "source": "Kuat Systems Trade Commission",
-                "time": "1 day ago"
-            }
-        ]
-
+        news_items = get_youtini_articles(limit=5)
         return jsonify({"success": True, "data": news_items})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
