@@ -3,17 +3,21 @@
  * Displays Star Wars YouTube videos with toggle between different content types
  */
 
+// Video rotation interval: 5 minutes (in milliseconds)
+const VIDEO_ROTATION_INTERVAL_MS = 300000;
+
 class YouTubeFeed {
     constructor() {
         this.videoContainer = document.getElementById('youtube-video-container');
+        this.currentCategory = 'scenery';
+        this.currentVideoIndex = 0;
+        this.videoRotationInterval = null;
         
         // Validate that the video container exists
         if (!this.videoContainer) {
             console.error('YouTube video container not found in DOM');
             return;
         }
-        
-        this.currentCategory = 'scenery';
         
         // YouTube video IDs for different Star Wars content
         this.videos = {
@@ -39,8 +43,6 @@ class YouTubeFeed {
             ]
         };
         
-        this.currentVideoIndex = 0;
-        this.videoRotationInterval = null;
         this.init();
     }
 
@@ -103,10 +105,10 @@ class YouTubeFeed {
             clearInterval(this.videoRotationInterval);
         }
         
-        // Rotate to next video every 5 minutes (300000 ms)
+        // Rotate to next video every 5 minutes
         this.videoRotationInterval = setInterval(() => {
             this.cycleVideo();
-        }, 300000);
+        }, VIDEO_ROTATION_INTERVAL_MS);
     }
 
     cycleVideo() {
