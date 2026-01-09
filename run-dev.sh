@@ -30,6 +30,9 @@ if [ ! -f ".env" ]; then
     echo "   OPENWEATHER_API_KEY=your_key"
     echo "   WEATHER_LOCATION=your_city"
     echo ""
+else
+    echo "📄 Loading environment variables from .env..."
+    export $(cat .env | grep -v '^#' | xargs)
 fi
 
 # Start the server

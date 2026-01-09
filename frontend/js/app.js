@@ -13,6 +13,7 @@ class KuatSystemsDashboard {
         this.systemInterval = 5000;      // 5 seconds
         this.weatherInterval = 300000;   // 5 minutes
         this.newsInterval = 600000;      // 10 minutes
+        this.subwayInterval = 60000;     // 1 minute
 
         // Initialize components
         this.bountyTracker = null;
@@ -33,12 +34,14 @@ class KuatSystemsDashboard {
         this.updateSystemStats();
         this.updateWeather();
         this.updateNews();
+        this.updateSubway();
 
         // Set up periodic updates
         setInterval(() => this.updateChronometer(), this.chronoInterval);
         setInterval(() => this.updateSystemStats(), this.systemInterval);
         setInterval(() => this.updateWeather(), this.weatherInterval);
         setInterval(() => this.updateNews(), this.newsInterval);
+        setInterval(() => this.updateSubway(), this.subwayInterval);
 
         console.log('Dashboard initialized successfully');
     }
@@ -224,6 +227,76 @@ class KuatSystemsDashboard {
             }
         } catch (error) {
             console.error('News update error:', error);
+        }
+    }
+
+    async updateSubway() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/api/subway`);
+            const data = await response.json();
+
+            if (data.success) {
+                const subway = data.data;
+
+                // Update station name
+                document.getElementById('subway-station').textContent = subway.station;
+
+                // Update lines
+                const linesContainer = document.getElementById('subway-lines');
+                linesContainer.innerHTML = '';
+
+                if (subway.lines && subway.lines.length > 0) {
+                    subway.lines.forEach(line => {
+                        const lineItem = document.createElement('div');
+                        lineItem.className = 'subway-line-item fade-in';
+
+                        // Format arrival times
+                        const arrivalText = line.arrivals.map(min => {
+                            if (min === 0) return 'Now';
+                            if (min === 1) return '1 min';
+                            return `${min} min`;
+                        }).join(', ');
+
+                        // Create delay indicator if needed
+                        const delayIndicator = line.delayed ? 
+                            '<span class="delay-indicator" title="Service Delays">⚠</span>' : '';
+
+                        // Display format: Route (Direction): times
+                        lineItem.innerHTML = `
+                            <span class="route-badge route-${line.route}" style="background-color: ${line.color || '#808183'}">
+                                ${line.route}
+                            </span>
+                            <span class="route-direction">(${line.direction})</span>
+                            <span class="arrival-times">${arrivalText}</span>
+                            ${delayIndicator}
+                        `;
+
+                        linesContainer.appendChild(lineItem);
+                    });
+                } else {
+                    linesContainer.innerHTML = `
+                        <div class="subway-placeholder">
+                            <p>No upcoming trains</p>
+                            <p class="small">Check back soon</p>
+                        </div>
+                    `;
+                }
+
+                // Update status badge
+                const statusBadge = document.getElementById('subway-status');
+                statusBadge.textContent = subway.status;
+
+                // Set badge color based on status
+                if (subway.status.includes('OPERATIONAL')) {
+                    statusBadge.className = 'status-badge optimal';
+                } else if (subway.status.includes('DELAY')) {
+                    statusBadge.className = 'status-badge degraded';
+                } else {
+                    statusBadge.className = 'status-badge nominal';
+                }
+            }
+        } catch (error) {
+            console.error('Subway update error:', error);
         }
     }
 

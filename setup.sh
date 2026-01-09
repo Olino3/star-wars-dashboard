@@ -177,6 +177,46 @@ else
     echo "ℹ️  Skipping weather configuration. Dashboard will use mock data."
 fi
 
+# Optional: Configure subway/transit times
+echo ""
+echo "🚇 NYC Subway Configuration (Optional)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Configure your nearest NYC subway station for real-time arrival times."
+echo "Note: MTA API no longer requires an API key!"
+echo ""
+read -p "Do you want to configure NYC subway times? (y/N) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "Enter your subway station ID (e.g., D17 for 7th Ave-53rd St, A42 for Port Authority)"
+    echo "Find station IDs at: http://web.mta.info/developers/data/nyct/subway/Stations.csv"
+    read -p "Station ID: " STATION_ID
+
+    # Append to environment file or create if it doesn't exist
+    if [ -f "$INSTALL_DIR/.env" ]; then
+        # Append to existing .env
+        cat >> "$INSTALL_DIR/.env" <<EOF
+SUBWAY_CITY=NYC
+SUBWAY_STATION_ID=$STATION_ID
+EOF
+    else
+        # Create new .env file
+        cat > "$INSTALL_DIR/.env" <<EOF
+SUBWAY_CITY=NYC
+SUBWAY_STATION_ID=$STATION_ID
+EOF
+        # Update systemd service to use .env file
+        sudo sed -i '/\[Service\]/a EnvironmentFile='$INSTALL_DIR'/.env' /etc/systemd/system/kuat-systems-dashboard.service
+    fi
+
+    sudo systemctl daemon-reload
+    sudo systemctl restart kuat-systems-dashboard.service
+
+    echo "✅ Subway configuration saved!"
+else
+    echo "ℹ️  Skipping subway configuration. Dashboard will show mock data."
+fi
+
 # Final instructions
 echo ""
 echo "╔═══════════════════════════════════════════╗"

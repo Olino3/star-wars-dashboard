@@ -9,6 +9,7 @@ import os
 import random
 from utils.system_stats import get_system_stats
 from utils.weather import get_weather_data, get_galactic_date
+from utils.subway import get_subway_data
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
@@ -16,6 +17,8 @@ CORS(app)
 # Configuration
 WEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'YOUR_API_KEY_HERE')
 WEATHER_LOCATION = os.getenv('WEATHER_LOCATION', 'London')
+SUBWAY_CITY = os.getenv('SUBWAY_CITY', 'NYC')
+SUBWAY_STATION_ID = os.getenv('SUBWAY_STATION_ID', 'D17')
 
 # Bounty Hunter Data
 BOUNTY_TARGETS = [
@@ -138,6 +141,19 @@ def api_news():
         ]
 
         return jsonify({"success": True, "data": news_items})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/subway')
+def api_subway():
+    """
+    Get transit/subway arrival times
+    Returns real-time arrival data for configured station
+    """
+    try:
+        subway = get_subway_data(SUBWAY_CITY, None, SUBWAY_STATION_ID)
+        return jsonify({"success": True, "data": subway})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
