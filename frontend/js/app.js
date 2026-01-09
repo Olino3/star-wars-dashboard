@@ -179,12 +179,12 @@ class KuatSystemsDashboard {
                 const weather = data.data;
 
                 document.getElementById('weather-location').textContent = weather.location;
-                document.getElementById('weather-temp').textContent = `${weather.temperature}°C`;
+                document.getElementById('weather-temp').textContent = `${weather.temperature}°F`;
                 document.getElementById('weather-desc').textContent = weather.description;
-                document.getElementById('feels-like').textContent = `${weather.feels_like}°C`;
+                document.getElementById('feels-like').textContent = `${weather.feels_like}°F`;
                 document.getElementById('humidity').textContent = `${weather.humidity}%`;
-                document.getElementById('wind-speed').textContent = `${weather.wind_speed} km/h`;
-                document.getElementById('visibility').textContent = `${weather.visibility} km`;
+                document.getElementById('wind-speed').textContent = `${weather.wind_speed} mph`;
+                document.getElementById('visibility').textContent = `${weather.visibility} mi`;
 
                 // Update weather animation based on description
                 this.updateWeatherAnimation(weather.description);

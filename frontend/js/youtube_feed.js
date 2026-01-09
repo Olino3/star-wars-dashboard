@@ -1,6 +1,7 @@
 /**
  * YouTube Video Feed Module
  * Displays Star Wars YouTube videos with toggle between different content types
+ * Fetches video IDs from secure Flask backend proxy
  */
 
 // Video rotation interval: 5 minutes (in milliseconds)
@@ -10,37 +11,18 @@ class YouTubeFeed {
     constructor() {
         this.videoContainer = document.getElementById('youtube-video-container');
         this.currentCategory = 'scenery';
-        this.currentVideoIndex = 0;
-        this.videoRotationInterval = null;
+        this.apiBaseUrl = window.location.origin;
         
-        // Validate that the video container exists
-        if (!this.videoContainer) {
-            console.error('YouTube video container not found in DOM');
-            return;
-        }
+        // Local cache for video IDs fetched from backend
+        this.videoCache = {};
         
-        // YouTube video IDs for different Star Wars content
-        this.videos = {
-            scenery: [
-                'muAVrtg-rKs', // Star Wars Ambient Space
-                '1k59gXTWf-A', // Star Wars Ambience
-                'fCUlgFKGF0c'  // Star Wars Meditation
-            ],
-            battles: [
-                'yHfLyMAHrQE', // Epic Battles
-                'CbIZU8cQWXc', // Space Battles
-                'wxL8bVJhXCM'  // Battle of Yavin
-            ],
-            music: [
-                'S_VoxcEjfFI', // Star Wars Theme
-                '_D0ZQPqeJkk', // Imperial March
-                '1gpXMGit4P8'  // Cantina Band
-            ],
-            lore: [
-                'wEBiPGmTphY', // Star Wars Lore
-                'XD9WWqdfzRs', // History of Star Wars
-                'BSqJBWvbFgY'  // Jedi vs Sith
-            ]
+        // Fallback video IDs in case API fails
+        // Verified working embeddable Star Wars videos
+        this.fallbackVideos = {
+            scenery: ['1k59gXTWf-A', 'fCUlgFKGF0c', 'SjC5bezSaWU'],
+            battles: ['ns_PrdukHuM', '8Qn_spdM5Zg', 'r5h2dLMqbJA'],
+            music: ['_D0ZQPqeJkk', '1gpXMGit4P8', 'W1937VEYguI'],
+            lore: ['wEBiPGmTphY', 'XD9WWqdfzRs', 'BSqJBWvbFgY']
         };
         
         this.init();
@@ -70,51 +52,147 @@ class YouTubeFeed {
         });
     }
 
-    loadVideo() {
-        // Validate container exists
-        if (!this.videoContainer) {
-            return;
+    async fetchVideoIds(category) {
+        /**
+         * Fetch video IDs from the Flask backend proxy
+         * Backend handles YouTube API calls securely with caching
+         */
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/api/youtube/${category}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && data.data && data.data.length > 0) {
+                // Cache the video IDs locally
+                this.videoCache[category] = data.data;
+                console.log(`Loaded ${data.data.length} videos for ${category} (source: ${data.source})`);
+                return data.data;
+            } else {
+                throw new Error(data.error || 'No videos returned');
+            }
+        } catch (error) {
+            console.error(`Failed to fetch videos for ${category}:`, error);
+            return null;
+        }
+    }
+
+    async getVideoIds(category) {
+        /**
+         * Get video IDs for category - uses local cache if available,
+         * otherwise fetches from backend
+         */
+        // Check local cache first
+        if (this.videoCache[category] && this.videoCache[category].length > 0) {
+            return this.videoCache[category];
         }
         
-        // Validate category exists
-        if (!this.videos[this.currentCategory]) {
-            console.error(`Invalid category: ${this.currentCategory}`);
-            this.currentCategory = 'scenery';
+        // Fetch from backend
+        const videos = await this.fetchVideoIds(category);
+        
+        if (videos && videos.length > 0) {
+            return videos;
         }
         
-        const videoId = this.videos[this.currentCategory][this.currentVideoIndex];
-        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
+        // Fall back to hardcoded videos
+        console.warn(`Using fallback videos for ${category}`);
+        return this.fallbackVideos[category] || this.fallbackVideos.scenery;
+    }
+
+    async loadVideo() {
+        /**
+         * Load and display a video from the current category
+         */
+        // Show loading state
+        this.showLoading();
         
+        try {
+            // Get video IDs (from cache, API, or fallback)
+            const videoIds = await this.getVideoIds(this.currentCategory);
+            
+            if (!videoIds || videoIds.length === 0) {
+                this.showError('No transmissions available');
+                return;
+            }
+            
+            // Ensure index is within bounds
+            if (this.currentVideoIndex >= videoIds.length) {
+                this.currentVideoIndex = 0;
+            }
+            
+            const videoId = videoIds[this.currentVideoIndex];
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
+            
+            this.videoContainer.innerHTML = `
+                <iframe
+                    width="100%"
+                    height="100%"
+                    src="${embedUrl}"
+                    style="border: none;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    class="youtube-iframe"
+                ></iframe>
+            `;
+        } catch (error) {
+            console.error('Error loading video:', error);
+            this.showError('Transmission feed offline');
+        }
+    }
+
+    showLoading() {
+        /**
+         * Display loading state in video container
+         */
         this.videoContainer.innerHTML = `
-            <iframe
-                width="100%"
-                height="100%"
-                src="${embedUrl}"
-                title="Star Wars YouTube Video Player"
-                style="border: none;"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                class="youtube-iframe"
-            ></iframe>
+            <div class="youtube-placeholder">
+                <p>⚡ ESTABLISHING HOLONET CONNECTION</p>
+                <p class="small">Synchronizing transmission feed...</p>
+            </div>
         `;
     }
 
-    startVideoRotation() {
-        // Clear existing interval if any
-        if (this.videoRotationInterval) {
-            clearInterval(this.videoRotationInterval);
-        }
+    showError(message) {
+        /**
+         * Display error state with graceful message
+         */
+        this.videoContainer.innerHTML = `
+            <div class="youtube-placeholder">
+                <p>⚠️ TRANSMISSION DISRUPTED</p>
+                <p class="small">${message}</p>
+                <p class="small" style="margin-top: 1rem;">Attempting to restore connection...</p>
+            </div>
+        `;
         
-        // Rotate to next video every 5 minutes
-        this.videoRotationInterval = setInterval(() => {
-            this.cycleVideo();
-        }, VIDEO_ROTATION_INTERVAL_MS);
+        // Retry with fallback after delay
+        setTimeout(() => {
+            this.videoCache[this.currentCategory] = this.fallbackVideos[this.currentCategory];
+            this.loadVideo();
+        }, 3000);
     }
 
     cycleVideo() {
-        const categoryVideos = this.videos[this.currentCategory];
-        this.currentVideoIndex = (this.currentVideoIndex + 1) % categoryVideos.length;
+        /**
+         * Cycle to the next video in the current category
+         */
+        const videoIds = this.videoCache[this.currentCategory] || this.fallbackVideos[this.currentCategory];
+        this.currentVideoIndex = (this.currentVideoIndex + 1) % videoIds.length;
         this.loadVideo();
+    }
+
+    async refreshCategory(category) {
+        /**
+         * Force refresh video IDs for a specific category
+         * Clears local cache and fetches fresh from backend
+         */
+        delete this.videoCache[category];
+        if (category === this.currentCategory) {
+            this.currentVideoIndex = 0;
+            await this.loadVideo();
+        }
     }
 }
 

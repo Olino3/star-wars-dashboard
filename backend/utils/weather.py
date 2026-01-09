@@ -5,6 +5,7 @@ Retrieves atmospheric conditions (weather data)
 
 import requests
 from datetime import datetime
+from urllib.parse import quote
 
 
 def get_weather_data(api_key=None, location="London"):
@@ -19,12 +20,15 @@ def get_weather_data(api_key=None, location="London"):
         return get_mock_weather()
 
     try:
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=metric"
+        # URL-encode the location to handle spaces and special characters
+        encoded_location = quote(location)
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={encoded_location}&appid={api_key}&units=imperial"
         response = requests.get(url, timeout=5)
 
         if response.status_code == 200:
             data = response.json()
-            return parse_weather_data(data)
+            # Pass original location name for display (API may return abbreviated name)
+            return parse_weather_data(data, location)
         else:
             return get_mock_weather()
     except Exception as e:
@@ -32,18 +36,20 @@ def get_weather_data(api_key=None, location="London"):
         return get_mock_weather()
 
 
-def parse_weather_data(data):
-    """Parse OpenWeatherMap API response into themed format"""
+def parse_weather_data(data, display_location=None):
+    """Parse OpenWeatherMap API response into themed format (Imperial units)"""
+    # Use display_location if provided, otherwise fall back to API response
+    location_name = display_location if display_location else data.get("name", "Unknown Sector")
     return {
-        "location": data.get("name", "Unknown Sector"),
+        "location": location_name,
         "temperature": round(data["main"]["temp"]),
         "feels_like": round(data["main"]["feels_like"]),
         "humidity": data["main"]["humidity"],
         "pressure": data["main"]["pressure"],
         "description": data["weather"][0]["description"].title(),
         "icon": data["weather"][0]["icon"],
-        "wind_speed": round(data["wind"]["speed"] * 3.6, 1),  # Convert m/s to km/h
-        "visibility": data.get("visibility", 10000) / 1000,  # Convert to km
+        "wind_speed": round(data["wind"]["speed"], 1),  # Already in mph with imperial units
+        "visibility": round(data.get("visibility", 16093) / 1609.34, 1),  # Convert meters to miles
         "atmospheric_status": get_atmospheric_status(data)
     }
 
@@ -73,17 +79,17 @@ def get_atmospheric_status(data):
 
 
 def get_mock_weather():
-    """Return mock weather data for demo purposes"""
+    """Return mock weather data for demo purposes (Imperial units)"""
     return {
         "location": "Coruscant Sector",
-        "temperature": 22,
-        "feels_like": 21,
+        "temperature": 72,
+        "feels_like": 70,
         "humidity": 65,
         "pressure": 1013,
         "description": "Partly Cloudy",
         "icon": "02d",
-        "wind_speed": 15.5,
-        "visibility": 10.0,
+        "wind_speed": 9.6,
+        "visibility": 6.2,
         "atmospheric_status": "ATMOSPHERIC CLARITY OPTIMAL"
     }
 

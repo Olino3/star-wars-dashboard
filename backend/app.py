@@ -6,10 +6,15 @@ Flask-based API serving system stats, weather, and transit data
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import os
+from dotenv import load_dotenv
 from utils.system_stats import get_system_stats
 from utils.weather import get_weather_data, get_galactic_date
 from utils.subway import get_subway_data
 from utils.youtini import get_youtini_articles
+from utils.youtube import get_youtube_videos, get_all_categories
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
@@ -19,6 +24,7 @@ WEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'YOUR_API_KEY_HERE')
 WEATHER_LOCATION = os.getenv('WEATHER_LOCATION', 'London')
 SUBWAY_CITY = os.getenv('SUBWAY_CITY', 'NYC')
 SUBWAY_STATION_ID = os.getenv('SUBWAY_STATION_ID', 'D17')
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY', 'YOUR_YOUTUBE_API_KEY_HERE')
 
 RSS_FEEDS = [
     "https://www.starwars.com/news",
@@ -86,6 +92,39 @@ def api_subway():
         return jsonify({"success": True, "data": subway})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/youtube/<category>')
+def api_youtube(category):
+    """
+    Get YouTube video IDs for Star Wars content by category
+    
+    Categories: scenery, battles, music, lore
+    
+    Uses 24-hour caching to respect YouTube API quota limits.
+    Falls back to curated video IDs if API is unavailable.
+    """
+    try:
+        result = get_youtube_videos(YOUTUBE_API_KEY, category)
+        return jsonify({
+            "success": result['success'],
+            "data": result['data'],
+            "source": result.get('source', 'unknown'),
+            "error": result.get('error')
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/youtube/categories')
+def api_youtube_categories():
+    """Get list of available YouTube video categories"""
+    try:
+        categories = get_all_categories()
+        return jsonify({"success": True, "data": categories})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 @app.route('/health')
 def health():
