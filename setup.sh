@@ -35,6 +35,11 @@ sudo apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    python3-dev \
+    build-essential \
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
     unclutter \
     x11-xserver-utils \
     git
