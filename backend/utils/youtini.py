@@ -173,7 +173,7 @@ def parse_articles(html_content, limit=5):
             
             # Normalize URL - convert relative to absolute
             if href.startswith('./'):
-                url = 'https://youtini.com' + href[1:]  # Remove leading dot
+                url = 'https://youtini.com' + href[1:]  # Remove leading "./" prefix (keep leading slash)
             elif href.startswith('/'):
                 url = 'https://youtini.com' + href
             else:
