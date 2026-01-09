@@ -11,6 +11,8 @@ class YouTubeFeed {
     constructor() {
         this.videoContainer = document.getElementById('youtube-video-container');
         this.currentCategory = 'scenery';
+        this.currentVideoIndex = 0;
+        this.rotationTimer = null;
         this.apiBaseUrl = window.location.origin;
         
         // Local cache for video IDs fetched from backend
@@ -181,6 +183,22 @@ class YouTubeFeed {
         const videoIds = this.videoCache[this.currentCategory] || this.fallbackVideos[this.currentCategory];
         this.currentVideoIndex = (this.currentVideoIndex + 1) % videoIds.length;
         this.loadVideo();
+    }
+
+    startVideoRotation() {
+        /**
+         * Start automatic video rotation every VIDEO_ROTATION_INTERVAL_MS
+         * Clears any existing rotation timer before starting
+         */
+        // Clear existing timer if any
+        if (this.rotationTimer) {
+            clearInterval(this.rotationTimer);
+        }
+        
+        // Start new rotation timer
+        this.rotationTimer = setInterval(() => {
+            this.cycleVideo();
+        }, VIDEO_ROTATION_INTERVAL_MS);
     }
 
     async refreshCategory(category) {
