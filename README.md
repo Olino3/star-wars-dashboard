@@ -1,8 +1,8 @@
 # 🌟 Kuat Systems Dashboard
 
-A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-wide monitors. Transform your display into a Kuat Systems Engineering Command Center with real-time system monitoring, atmospheric data, and bounty tracking capabilities.
+A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-wide monitors. Transform your display into a Kuat Systems Engineering Command Center with real-time system monitoring, atmospheric data, news feeds, transit information, and immersive Star Wars video content.
 
-![Dashboard Preview](https://via.placeholder.com/1200x400/0a0a0a/00d4ff?text=Kuat+Systems+Dashboard)
+![Dashboard Preview](docs/screenshots/dashboard-main.png)
 
 ## ✨ Features
 
@@ -12,11 +12,15 @@ A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-
 - **🌡️ Reactor Core Status**: Real-time CPU temperature and stability monitoring
 - **💾 Memory Banks**: RAM usage with integrity indicators
 - **💿 Storage Systems**: Disk space capacity tracking
-- **🌍 Atmospheric Data**: Live weather information for your location
+- **🌍 Atmospheric Data**: Live weather information with animated weather icons (rain, sun, clouds, snow, thunder, fog)
 - **📡 HoloNet News Feed**: Real-time Star Wars book/comic news from Youtini with intelligent caching
 - **🚇 Transit Network Monitor**: NYC subway real-time arrival times (with station filtering and direction separation)
-- **🎬 HoloNet Transmissions**: Star Wars YouTube video feed with toggleable content (Scenery, Battles, Music, Lore)
-- **🚀 Hyperspace Screensaver**: Animated screensaver that activates after 10 minutes of inactivity
+- **🎬 HoloNet Transmissions**: Star Wars YouTube video feed with toggleable content categories:
+  - **Scenery**: Ambient Star Wars landscapes and environments
+  - **Battles**: Epic lightsaber duels and space battles
+  - **Music**: Official Star Wars soundtracks
+  - **Lore**: Star Wars history and lore explained
+- **ℹ️ Mission Briefing**: Commander status and tactical objectives
 
 ### Aesthetics
 
@@ -125,6 +129,32 @@ The system will automatically:
 - Separate arrivals by route and direction
 - Update every 60 seconds
 
+### YouTube API Configuration (Optional)
+
+To enable dynamic Star Wars video content in the HoloNet Transmissions panel:
+
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the YouTube Data API v3
+3. Create an API key
+4. Add to your `.env` file:
+
+```bash
+YOUTUBE_API_KEY=your_youtube_api_key_here
+```
+
+5. Restart the service:
+
+```bash
+sudo systemctl restart kuat-systems-dashboard.service
+```
+
+The system will:
+- Cache video IDs for 24 hours to respect API quota limits
+- Automatically rotate through videos every 5 minutes
+- Fall back to curated videos if API is unavailable
+- Support four content categories: Scenery, Battles, Music, Lore
+- Update every 60 seconds
+
 ### News Cache Refresh (Optional)
 
 For optimal performance, set up hourly news cache refresh:
@@ -151,14 +181,6 @@ this.newsInterval = 600000;      // News: 10 minutes
 this.subwayInterval = 60000;     // Subway: 1 minute
 ```
 
-### Customize Screensaver Timeout
-
-Edit `frontend/js/screensaver.js`:
-
-```javascript
-this.timeout = 600000;  // 10 minutes in milliseconds
-```
-
 ### Add Custom News Sources
 
 The dashboard uses Youtini.com as its news source with intelligent web scraping and caching. The implementation includes:
@@ -179,22 +201,25 @@ star-wars-dashboard/
 │   ├── cron/
 │   │   └── refresh_news.py    # Hourly news cache refresh script
 │   ├── data/
-│   │   └── stations.db        # NYC subway stations database
+│   │   ├── stations.db        # NYC subway stations database
+│   │   └── youtube_cache.json # YouTube video IDs cache (24-hour)
 │   └── utils/
 │       ├── system_stats.py    # System monitoring
-│       ├── weather.py         # Weather data fetching
+│       ├── weather.py         # Weather data fetching (OpenWeatherMap)
 │       ├── subway.py          # NYC subway real-time data
+│       ├── youtube.py         # YouTube API proxy with caching
 │       └── youtini.py         # Star Wars news scraper with caching
 ├── frontend/
 │   ├── index.html            # Main dashboard HTML
 │   ├── css/
-│   │   ├── main.css          # Core styles
+│   │   ├── main.css          # Core styles & weather animations
 │   │   └── animations.css    # Animations & effects
 │   ├── js/
 │   │   ├── app.js            # Main application logic
-│   │   ├── screensaver.js    # Hyperspace screensaver
 │   │   └── youtube_feed.js   # YouTube video feed module
 │   └── fonts/                # Star Wars fonts (add your own)
+├── docs/
+│   └── screenshots/          # Dashboard screenshots
 ├── config/
 │   ├── autostart.desktop     # Autostart configuration
 │   └── launch-kiosk.sh       # Kiosk mode launcher (created by setup.sh)
@@ -248,12 +273,6 @@ sudo journalctl -u kuat-systems-dashboard.service -f
 curl http://localhost:5000/api/weather
 ```
 
-### Screensaver not activating
-
-1. Check browser console for JavaScript errors (F12)
-2. Ensure you're not moving the mouse/keyboard
-3. Default timeout is 10 minutes - test with a shorter value
-
 ### Performance issues on Raspberry Pi
 
 1. Reduce update intervals in `frontend/js/app.js`
@@ -263,13 +282,6 @@ curl http://localhost:5000/api/weather
 .crt-flicker {
     display: none;  /* Disable for better performance */
 }
-```
-
-3. Reduce screensaver stars:
-
-```javascript
-// In frontend/js/screensaver.js
-this.numStars = 100;  // Reduce from 200
 ```
 
 ## 🔧 Manual Control
@@ -303,16 +315,16 @@ The backend exposes these REST API endpoints:
 |----------|-------------|
 | `GET /` | Main dashboard page |
 | `GET /api/system` | System statistics (CPU, RAM, Disk) |
-| `GET /api/weather` | Weather/atmospheric data |
+| `GET /api/weather` | Weather/atmospheric data (OpenWeatherMap) |
 | `GET /api/chronometer` | Current time (Kuat Systems Standard + Earth) |
-| `GET /api/news` | HoloNet news feed |
-| `GET /api/subway` | Transit/subway arrival times |
+| `GET /api/news` | HoloNet news feed (Youtini) |
+| `GET /api/subway` | Transit/subway arrival times (MTA) |
+| `GET /api/youtube/<category>` | YouTube video IDs (scenery, battles, music, lore) |
 | `GET /health` | Service health check |
 
 ## 🎯 Future Enhancements
 
 - [ ] Support for other transit systems (London Underground, BART, etc.)
-- [ ] Multiple screensaver modes (Death Star schematics, star field)
 - [ ] Network monitoring (show active devices as "Fleet Status")
 - [ ] Smart home integration (control lights as "Reactor Controls")
 - [ ] Voice commands (via Google Assistant/Alexa)
@@ -324,7 +336,6 @@ The backend exposes these REST API endpoints:
 
 Feel free to fork this project and submit pull requests! Some ideas:
 
-- Add new screensaver animations
 - Improve theme customization
 - Add new data modules
 - Optimize performance
@@ -354,13 +365,14 @@ If you encounter issues or have questions:
 ## 🎬 Screenshots
 
 ### Main Dashboard View
-Full tactical overview with all systems operational.
+The full tactical command center with all systems operational, showing real-time data across all modules.
 
-### Bounty Hunter Tracking
-Active scan showing detected targets with threat levels.
+![Main Dashboard](docs/screenshots/dashboard-main.png)
 
-### Hyperspace Screensaver
-Immersive hyperspace animation during idle periods.
+### Dashboard Features
+- **Left Panel**: System monitoring (Reactor Core, Memory Banks, Storage Systems, Mission Briefing)
+- **Center Panel**: HoloNet News Feed and YouTube Transmissions with category switching
+- **Right Panel**: Atmospheric Data with animated weather icons and Transit Network Status
 
 ---
 

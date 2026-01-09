@@ -19,7 +19,6 @@ A complete, production-ready Star Wars-themed dashboard system optimized for Ras
 **Frontend:**
 - Vanilla JavaScript (no frameworks for better Pi performance)
 - CSS3 with custom animations
-- HTML5 Canvas for screensaver
 - Responsive CSS Grid layout
 
 **Deployment:**
@@ -49,11 +48,10 @@ star-wars-dashboard/
 │   ├── index.html                   # Main dashboard HTML structure
 │   ├── css/
 │   │   ├── main.css                # Core styles, theme, layout
-│   │   └── animations.css          # Screensaver & animation effects
+│   │   └── animations.css          # Animation effects
 │   ├── js/
 │   │   ├── app.js                  # Main app logic, API calls
-│   │   ├── screensaver.js          # Hyperspace animation
-│   │   └── bounty_tracker.js       # Bounty hunting module
+│   │   └── youtube_feed.js         # YouTube video feed module
 │   └── fonts/                       # (Empty - user adds Star Wars fonts)
 │
 ├── config/                           # Configuration Files
@@ -136,17 +134,7 @@ star-wars-dashboard/
 
 **Frontend:** Scrollable feed with fade-in animations
 
-### 6. Hyperspace Screensaver
-
-**File:** `frontend/js/screensaver.js`
-
-- HTML5 Canvas-based animation
-- 200 stars moving toward viewer
-- 3D to 2D projection
-- Activates after 10 minutes of inactivity
-- Deactivates on any user interaction
-
-### 7. NYC Subway Transit Monitor
+### 6. NYC Subway Transit Monitor
 
 **File:** `backend/utils/subway.py`
 
@@ -274,7 +262,7 @@ Frontend Updates DOM Elements
 ### Kiosk Mode Setup
 
 1. **Hide cursor:** unclutter utility
-2. **Disable screensaver:** xset commands
+2. **Disable system screensaver:** xset commands
 3. **Full-screen browser:** Chromium with --kiosk flag
 4. **Disable popups:** --noerrdialogs, --disable-infobars
 5. **Auto-launch:** LXDE autostart desktop entry
@@ -297,7 +285,6 @@ Frontend Updates DOM Elements
 **Target Performance (Raspberry Pi 4):**
 - Initial load: < 2 seconds
 - API response time: < 100ms
-- Screensaver FPS: 30-60 fps
 - Memory usage: < 200MB (backend + frontend)
 - CPU idle: < 5%
 
@@ -369,15 +356,13 @@ Frontend Updates DOM Elements
 - [x] Core dashboard functionality
 - [x] System monitoring
 - [x] Weather integration
-- [x] Screensaver
-- [x] Bounty tracking
+- [x] YouTube video feed
 - [x] Kiosk mode setup
 - [x] Youtini news scraping with caching
 - [x] NYC subway real-time arrivals
 
 ### Phase 2 (Planned)
 - [ ] Support for other transit systems (London, BART, etc.)
-- [ ] Multiple screensaver modes
 - [ ] Theme switcher
 - [ ] Historical data charts
 - [ ] Mobile companion app

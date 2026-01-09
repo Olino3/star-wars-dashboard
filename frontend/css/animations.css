@@ -1,63 +1,6 @@
 /* ============================================
-   SCREENSAVER & ANIMATIONS
+   ANIMATIONS & EFFECTS
    ============================================ */
-
-/* Screensaver Container */
-.screensaver {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    z-index: 10000;
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-.screensaver.active {
-    display: flex;
-}
-
-#hyperspace-canvas {
-    width: 100%;
-    height: 100%;
-}
-
-.screensaver-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 4rem;
-    font-weight: bold;
-    color: var(--imperial-blue);
-    text-shadow:
-        0 0 10px var(--imperial-blue-glow),
-        0 0 20px var(--imperial-blue-glow),
-        0 0 30px var(--imperial-blue-glow);
-    letter-spacing: 0.3em;
-    animation: glow-pulse 2s ease-in-out infinite;
-    pointer-events: none;
-}
-
-@keyframes glow-pulse {
-    0%, 100% {
-        opacity: 0.8;
-        text-shadow:
-            0 0 10px var(--imperial-blue-glow),
-            0 0 20px var(--imperial-blue-glow),
-            0 0 30px var(--imperial-blue-glow);
-    }
-    50% {
-        opacity: 1;
-        text-shadow:
-            0 0 20px var(--imperial-blue-glow),
-            0 0 40px var(--imperial-blue-glow),
-            0 0 60px var(--imperial-blue-glow);
-    }
-}
 
 /* ============================================
    DATA STREAM ANIMATION

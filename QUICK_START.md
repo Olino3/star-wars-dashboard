@@ -184,19 +184,14 @@ bash -x ./config/launch-kiosk.sh
 
 For better performance on Raspberry Pi 3 or older:
 
-1. Reduce number of stars in screensaver (`frontend/js/screensaver.js`):
-   ```javascript
-   this.numStars = 100;  // Default: 200
-   ```
-
-2. Increase update intervals (`frontend/js/app.js`):
+1. Increase update intervals (`frontend/js/app.js`):
    ```javascript
    this.systemInterval = 10000;   // 10 seconds instead of 5
    this.weatherInterval = 600000; // 10 minutes instead of 5
    this.subwayInterval = 120000;  // 2 minutes instead of 1
    ```
 
-3. Disable CRT flicker effect (see above)
+2. Disable CRT flicker effect (see above)
 
 ## Default Credentials & Ports
 
