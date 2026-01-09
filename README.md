@@ -1,26 +1,26 @@
-# 🌟 Galactic Command Dashboard
+# 🌟 Kuat Systems Dashboard
 
-A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-wide monitors. Transform your display into an Imperial Command Center with real-time system monitoring, atmospheric data, and bounty tracking capabilities.
+A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-wide monitors. Transform your display into a Kuat Systems Engineering Command Center with real-time system monitoring, atmospheric data, and bounty tracking capabilities.
 
-![Dashboard Preview](https://via.placeholder.com/1200x400/0a0a0a/00d4ff?text=Galactic+Command+Dashboard)
+![Dashboard Preview](https://via.placeholder.com/1200x400/0a0a0a/00d4ff?text=Kuat+Systems+Dashboard)
 
 ## ✨ Features
 
 ### Core Modules
 
-- **⏰ Chronometer**: Galactic Standard Time with Earth date/time display
+- **⏰ Chronometer**: Kuat Systems Standard Time with Earth date/time display
 - **🌡️ Reactor Core Status**: Real-time CPU temperature and stability monitoring
 - **💾 Memory Banks**: RAM usage with integrity indicators
 - **💿 Storage Systems**: Disk space capacity tracking
 - **🌍 Atmospheric Data**: Live weather information for your location
-- **📡 HoloNet News Feed**: Galactic news updates (expandable with RSS feeds)
+- **📡 HoloNet News Feed**: Kuat systems news updates (expandable with RSS feeds)
 - **🎯 Bounty Hunter Tracking**: Secret scanning module for detecting targets
 - **🚀 Hyperspace Screensaver**: Animated screensaver that activates after 10 minutes of inactivity
 
 ### Aesthetics
 
 - **Imperial Theme**: Dark palette with cyan/red accent colors
-- **Star Wars Fonts**: Styled typography reminiscent of galactic interfaces
+- **Star Wars Fonts**: Styled typography reminiscent of Kuat systems interfaces
 - **CRT Effects**: Authentic scanlines and flicker effects for retro-futuristic appeal
 - **Curved Display Optimized**: Layout designed for 21:9 and 32:9 aspect ratios
 - **Responsive Design**: Adapts to various screen sizes
@@ -44,7 +44,7 @@ A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-
 
 ```bash
 cd ~
-git clone https://github.com/yourusername/star-wars-dashboard.git
+git clone https://github.com/olino3/star-wars-dashboard.git
 cd star-wars-dashboard
 ```
 
@@ -97,7 +97,7 @@ WEATHER_LOCATION=London
 3. Restart the service:
 
 ```bash
-sudo systemctl restart galactic-dashboard.service
+sudo systemctl restart kuat-systems-dashboard.service
 ```
 
 ### Customize Update Intervals
@@ -176,13 +176,13 @@ For the best experience, download Star Wars fonts like "Star Jedi" or "Aurebesh"
 Check if the service is running:
 
 ```bash
-sudo systemctl status galactic-dashboard.service
+sudo systemctl status kuat-systems-dashboard.service
 ```
 
 View logs:
 
 ```bash
-sudo journalctl -u galactic-dashboard.service -f
+sudo journalctl -u kuat-systems-dashboard.service -f
 ```
 
 ### Weather data not updating
@@ -224,9 +224,9 @@ this.numStars = 100;  // Reduce from 200
 ### Start/Stop the Backend Service
 
 ```bash
-sudo systemctl start galactic-dashboard.service
-sudo systemctl stop galactic-dashboard.service
-sudo systemctl restart galactic-dashboard.service
+sudo systemctl start kuat-systems-dashboard.service
+sudo systemctl stop kuat-systems-dashboard.service
+sudo systemctl restart kuat-systems-dashboard.service
 ```
 
 ### Launch Kiosk Mode Manually
@@ -238,8 +238,8 @@ sudo systemctl restart galactic-dashboard.service
 ### Disable Auto-Start
 
 ```bash
-sudo systemctl disable galactic-dashboard.service
-rm ~/.config/autostart/galactic-dashboard.desktop
+sudo systemctl disable kuat-systems-dashboard.service
+rm ~/.config/autostart/kuat-systems-dashboard.desktop
 ```
 
 ## 🌐 API Endpoints
@@ -251,7 +251,7 @@ The backend exposes these REST API endpoints:
 | `GET /` | Main dashboard page |
 | `GET /api/system` | System statistics (CPU, RAM, Disk) |
 | `GET /api/weather` | Weather/atmospheric data |
-| `GET /api/chronometer` | Current time (Galactic Standard + Earth) |
+| `GET /api/chronometer` | Current time (Kuat Systems Standard + Earth) |
 | `GET /api/bounty/scan` | Bounty hunter target scan |
 | `GET /api/news` | HoloNet news feed |
 | `GET /health` | Service health check |
@@ -291,7 +291,7 @@ Created for Star Wars fans and Raspberry Pi enthusiasts.
 If you encounter issues or have questions:
 
 1. Check the [Troubleshooting](#-troubleshooting) section
-2. Review the backend logs: `sudo journalctl -u galactic-dashboard.service -f`
+2. Review the backend logs: `sudo journalctl -u kuat-systems-dashboard.service -f`
 3. Open an issue on GitHub with:
    - Your Raspberry Pi model
    - OS version (`cat /etc/os-release`)
@@ -310,6 +310,6 @@ Immersive hyperspace animation during idle periods.
 
 ---
 
-**Built with ❤️ for the Galactic Empire**
+**Built with ❤️ for Kuat Systems Engineering**
 
 *This is a fan project and is not affiliated with or endorsed by Lucasfilm Ltd. or Disney.*

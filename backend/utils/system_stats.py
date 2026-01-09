@@ -1,5 +1,5 @@
 """
-System Statistics Module for Galactic Command Dashboard
+System Statistics Module for Kuat Systems Dashboard
 Retrieves Raspberry Pi system metrics (CPU, RAM, Disk, Temperature)
 """
 

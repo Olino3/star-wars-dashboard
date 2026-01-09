@@ -5,7 +5,7 @@
 # Quick start for testing without full setup
 # ============================================
 
-echo "🚀 Starting Galactic Command Dashboard (Development Mode)"
+echo "🚀 Starting Kuat Systems Dashboard (Development Mode)"
 echo ""
 
 # Check if virtual environment exists

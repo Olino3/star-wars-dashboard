@@ -1,5 +1,5 @@
 """
-Weather Data Module for Galactic Command Dashboard
+Weather Data Module for Kuat Systems Dashboard
 Retrieves atmospheric conditions (weather data)
 """
 
@@ -90,7 +90,7 @@ def get_mock_weather():
 
 def get_galactic_date():
     """
-    Convert Earth date to 'Galactic Standard Calendar' format
+    Convert Earth date to 'Kuat Systems Standard Calendar' format
     Format: GS [Year]:[Day of Year]:[Hour]:[Minute]
     """
     now = datetime.now()

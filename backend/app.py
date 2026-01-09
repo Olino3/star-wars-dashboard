@@ -1,5 +1,5 @@
 """
-Galactic Command Dashboard - Backend API Server
+Kuat Systems Dashboard - Backend API Server
 Flask-based API serving system stats, weather, and bounty tracking data
 """
 
@@ -65,7 +65,7 @@ def api_weather():
 
 @app.route('/api/chronometer')
 def api_chronometer():
-    """Get current time in Galactic Standard format"""
+    """Get current time in Kuat Systems Standard format"""
     try:
         date_data = get_galactic_date()
         return jsonify({"success": True, "data": date_data})
@@ -132,7 +132,7 @@ def api_news():
             },
             {
                 "title": "Trade Routes Through Hyperspace Lane 7 Temporarily Closed",
-                "source": "Galactic Trade Commission",
+                "source": "Kuat Systems Trade Commission",
                 "time": "1 day ago"
             }
         ]
@@ -143,7 +143,7 @@ def api_news():
 
 
 def generate_coordinates():
-    """Generate random galactic coordinates"""
+    """Generate random Kuat sector coordinates"""
     sectors = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"]
     quadrant = random.randint(1, 9)
     sector = random.choice(sectors)
