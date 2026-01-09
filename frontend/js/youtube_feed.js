@@ -6,6 +6,13 @@
 class YouTubeFeed {
     constructor() {
         this.videoContainer = document.getElementById('youtube-video-container');
+        
+        // Validate that the video container exists
+        if (!this.videoContainer) {
+            console.error('YouTube video container not found in DOM');
+            return;
+        }
+        
         this.currentCategory = 'scenery';
         
         // YouTube video IDs for different Star Wars content
@@ -33,12 +40,14 @@ class YouTubeFeed {
         };
         
         this.currentVideoIndex = 0;
+        this.videoRotationInterval = null;
         this.init();
     }
 
     init() {
         this.setupCategoryButtons();
         this.loadVideo();
+        this.startVideoRotation();
     }
 
     setupCategoryButtons() {
@@ -53,11 +62,18 @@ class YouTubeFeed {
                 this.currentCategory = e.target.dataset.category;
                 this.currentVideoIndex = 0;
                 this.loadVideo();
+                // Restart video rotation timer
+                this.startVideoRotation();
             });
         });
     }
 
     loadVideo() {
+        // Validate container exists
+        if (!this.videoContainer) {
+            return;
+        }
+        
         // Validate category exists
         if (!this.videos[this.currentCategory]) {
             console.error(`Invalid category: ${this.currentCategory}`);
@@ -72,12 +88,25 @@ class YouTubeFeed {
                 width="100%"
                 height="100%"
                 src="${embedUrl}"
+                title="Star Wars YouTube Video Player"
                 style="border: none;"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
                 class="youtube-iframe"
             ></iframe>
         `;
+    }
+
+    startVideoRotation() {
+        // Clear existing interval if any
+        if (this.videoRotationInterval) {
+            clearInterval(this.videoRotationInterval);
+        }
+        
+        // Rotate to next video every 5 minutes (300000 ms)
+        this.videoRotationInterval = setInterval(() => {
+            this.cycleVideo();
+        }, 300000);
     }
 
     cycleVideo() {
