@@ -51,6 +51,11 @@ def get_relative_time(date_str):
         now = datetime.now()
         diff = now - parsed_date
         
+        # Handle future dates (negative time difference)
+        if diff.days < 0:
+            logger.warning(f"Date '{date_str}' is in the future, returning 'Just now'")
+            return "Just now"
+        
         if diff.days == 0:
             return "Today"
         elif diff.days == 1:
