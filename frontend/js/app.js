@@ -215,13 +215,43 @@ class KuatSystemsDashboard {
                 data.data.forEach(item => {
                     const newsItem = document.createElement('div');
                     newsItem.className = 'news-item fade-in';
-                    newsItem.innerHTML = `
-                        <div class="news-title">${item.title}</div>
-                        <div class="news-meta">
-                            <span class="news-source">${item.source}</span>
-                            <span class="news-time">${item.time}</span>
-                        </div>
-                    `;
+                    
+                    // Create title div
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'news-title';
+                    
+                    // Create title with optional link using DOM APIs to prevent XSS
+                    if (item.url) {
+                        const link = document.createElement('a');
+                        link.setAttribute('href', item.url);
+                        link.setAttribute('target', '_blank');
+                        link.setAttribute('rel', 'noopener noreferrer');
+                        link.className = 'news-link';
+                        link.textContent = item.title;
+                        titleDiv.appendChild(link);
+                    } else {
+                        titleDiv.textContent = item.title;
+                    }
+                    
+                    // Create meta div
+                    const metaDiv = document.createElement('div');
+                    metaDiv.className = 'news-meta';
+                    
+                    // Create source span
+                    const sourceSpan = document.createElement('span');
+                    sourceSpan.className = 'news-source';
+                    sourceSpan.textContent = item.source;
+                    
+                    // Create time span
+                    const timeSpan = document.createElement('span');
+                    timeSpan.className = 'news-time';
+                    timeSpan.textContent = item.time;
+                    
+                    // Assemble the structure
+                    metaDiv.appendChild(sourceSpan);
+                    metaDiv.appendChild(timeSpan);
+                    newsItem.appendChild(titleDiv);
+                    newsItem.appendChild(metaDiv);
                     newsFeed.appendChild(newsItem);
                 });
             }
