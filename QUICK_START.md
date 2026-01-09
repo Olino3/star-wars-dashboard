@@ -74,6 +74,9 @@ curl http://localhost:5000/api/bounty/scan | jq
 # News
 curl http://localhost:5000/api/news | jq
 
+# Subway arrivals
+curl http://localhost:5000/api/subway | jq
+
 # Health check
 curl http://localhost:5000/health
 ```
@@ -82,7 +85,7 @@ curl http://localhost:5000/health
 
 | File | Purpose |
 |------|---------|
-| `.env` | Environment variables (API keys, location) |
+| `.env` | Environment variables (API keys, location, station ID) |
 | `backend/requirements.txt` | Python dependencies |
 | `frontend/css/main.css` | Styling and theme customization |
 | `frontend/js/app.js` | Update intervals and app logic |
@@ -100,6 +103,7 @@ this.chronoInterval = 1000;      // Time: every 1 second
 this.systemInterval = 5000;      // System: every 5 seconds
 this.weatherInterval = 300000;   // Weather: every 5 minutes
 this.newsInterval = 600000;      // News: every 10 minutes
+this.subwayInterval = 60000;     // Subway: every 1 minute
 ```
 
 ### Change Colors
@@ -150,6 +154,19 @@ cat .env
 curl "http://api.openweathermap.org/data/2.5/weather?q=London&appid=YOUR_KEY&units=metric"
 ```
 
+### Subway not showing
+
+```bash
+# Check if station ID is configured in .env
+grep SUBWAY .env
+
+# Test subway API endpoint
+curl http://localhost:5000/api/subway | jq
+
+# Check if stations database exists
+ls -lh backend/data/stations.db
+```
+
 ### Kiosk mode issues
 
 ```bash
@@ -176,6 +193,7 @@ For better performance on Raspberry Pi 3 or older:
    ```javascript
    this.systemInterval = 10000;   // 10 seconds instead of 5
    this.weatherInterval = 600000; // 10 minutes instead of 5
+   this.subwayInterval = 120000;  // 2 minutes instead of 1
    ```
 
 3. Disable CRT flicker effect (see above)

@@ -13,6 +13,8 @@ A complete, production-ready Star Wars-themed dashboard system optimized for Ras
 - psutil for system monitoring
 - requests for external APIs
 - flask-cors for cross-origin support
+- gtfs-realtime-bindings for NYC subway data
+- beautifulsoup4 and lxml for web scraping
 
 **Frontend:**
 - Vanilla JavaScript (no frameworks for better Pi performance)
@@ -33,9 +35,15 @@ star-wars-dashboard/
 ├── backend/                          # Python Flask API Server
 │   ├── app.py                       # Main Flask application (API routes)
 │   ├── requirements.txt             # Python dependencies
+│   ├── cron/
+│   │   └── refresh_news.py         # Hourly news cache refresh script
+│   ├── data/
+│   │   └── stations.db             # NYC subway stations database (SQLite)
 │   └── utils/
 │       ├── system_stats.py         # System monitoring (CPU, RAM, Disk, Temp)
-│       └── weather.py              # Weather data fetching & parsing
+│       ├── weather.py              # Weather data fetching & parsing
+│       ├── subway.py               # NYC subway real-time arrivals (GTFS)
+│       └── youtini.py              # Star Wars news scraper with caching
 │
 ├── frontend/                         # Web Frontend
 │   ├── index.html                   # Main dashboard HTML structure
@@ -111,8 +119,21 @@ star-wars-dashboard/
 
 ### 5. HoloNet News Feed
 
-**Backend:** Currently serves mock news
-**Extensible:** Designed to accept RSS feeds
+**File:** `backend/utils/youtini.py`
+
+- Web scrapes Star Wars news from Youtini.com
+- Intelligent caching system (55-minute TTL)
+- Exponential backoff retry logic (4 retries)
+- Parses article titles, dates, and categories
+- Converts dates to relative time format
+- Optional cron job for hourly cache refresh
+
+**Cron Script:** `backend/cron/refresh_news.py`
+
+- Pre-warms news cache hourly
+- Rotating log files (1MB, 5 backups)
+- Prevents cache misses during user requests
+
 **Frontend:** Scrollable feed with fade-in animations
 
 ### 6. Hyperspace Screensaver
@@ -124,6 +145,31 @@ star-wars-dashboard/
 - 3D to 2D projection
 - Activates after 10 minutes of inactivity
 - Deactivates on any user interaction
+
+### 7. NYC Subway Transit Monitor
+
+**File:** `backend/utils/subway.py`
+
+- Real-time GTFS data from MTA
+- SQLite database for station information
+- Automatic database initialization from MTA CSV
+- Station-based filtering (only shows trains stopping at configured station)
+- Direction separation (northbound/southbound with custom labels)
+- Groups by route + direction combination
+- Updates every 60 seconds
+
+**Database:** `backend/data/stations.db`
+
+- Downloaded from MTA Stations.csv on first run
+- Caches station names, routes, and direction labels
+- Enables efficient filtering and labeling
+
+**Frontend:** `frontend/js/app.js` (updateSubway)
+
+- Displays route badges with MTA colors
+- Shows direction labels
+- Lists arrival times in minutes
+- Status indicators for service delays
 
 ## 🎨 Design Philosophy
 
@@ -174,7 +220,8 @@ star-wars-dashboard/
 | `/api/weather` | GET | 5m | Atmospheric data |
 | `/api/chronometer` | GET | 1s | Current time |
 | `/api/bounty/scan` | GET | On-demand | Target detection |
-| `/api/news` | GET | 10m | News feed |
+| `/api/news` | GET | 10m | Youtini news feed |
+| `/api/subway` | GET | 1m | NYC subway arrivals |
 | `/health` | GET | On-demand | Service status |
 
 ### Data Flow
@@ -198,6 +245,22 @@ Flask Backend (API Server)
          ↓
 Frontend Updates DOM Elements
 ```
+
+## 🔧 Caching & Performance
+
+### News Caching Strategy
+
+- **In-memory cache** with 55-minute TTL
+- **Exponential backoff** for failed requests (1s, 2s, 4s, 8s)
+- **Optional cron job** for hourly pre-warming
+- **Rotating logs** for monitoring (1MB files, 5 backups)
+
+### Subway Data Optimization
+
+- **SQLite database** caches station metadata
+- **One-time download** of MTA Stations.csv
+- **Efficient filtering** by station routes
+- **GTFS real-time** updates every 60 seconds
 
 ## 🚀 Deployment Strategy
 
@@ -266,18 +329,26 @@ Frontend Updates DOM Elements
 
 1. **Add New Data Modules:**
    - Create new API endpoint in `backend/app.py`
+   - Add utility module in `backend/utils/`
    - Add fetch function in `frontend/js/app.js`
    - Design panel in `frontend/index.html`
 
-2. **Integrate Real RSS Feeds:**
-   - Use `feedparser` library in Python
-   - Modify `api_news()` function
-   - Parse and format feed items
+2. **Add News Sources:**
+   - Modify `backend/utils/youtini.py` scraper
+   - Or create new scraper in `backend/utils/`
+   - Update `api_news()` in `backend/app.py`
+   - Consider adding cron refresh script
+
+3. **Add Transit Systems:**
+   - Create new utility in `backend/utils/` (similar to subway.py)
+   - Add station database or API integration
+   - Update frontend to display transit data
+   - Configure via environment variables
 
 3. **Add Multiple Themes:**
-   - Create CSS variable sets
-   - Add theme switcher button
-   - Store preference in localStorage
+   - Create CSS variable sets in `frontend/css/main.css`
+   - Add theme switcher button in `frontend/index.html`
+   - Store preference in localStorage via `frontend/js/app.js`
 
 4. **Smart Home Integration:**
    - Add Home Assistant API calls
@@ -301,9 +372,11 @@ Frontend Updates DOM Elements
 - [x] Screensaver
 - [x] Bounty tracking
 - [x] Kiosk mode setup
+- [x] Youtini news scraping with caching
+- [x] NYC subway real-time arrivals
 
 ### Phase 2 (Planned)
-- [ ] Real RSS feed parsing
+- [ ] Support for other transit systems (London, BART, etc.)
 - [ ] Multiple screensaver modes
 - [ ] Theme switcher
 - [ ] Historical data charts
