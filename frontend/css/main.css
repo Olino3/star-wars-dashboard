@@ -454,136 +454,70 @@ html, body {
 }
 
 /* ============================================
-   BOUNTY HUNTER PANEL
+   YOUTUBE VIDEO FEED
    ============================================ */
-.bounty-controls {
+.youtube-controls {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
 }
 
-.scan-button {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background: linear-gradient(135deg, var(--imperial-red) 0%, #cc0000 100%);
-    color: white;
-    border: 2px solid var(--imperial-red);
+.category-button {
+    flex: 1;
+    min-width: 80px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--imperial-blue);
+    border: 1px solid var(--imperial-blue);
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: bold;
     letter-spacing: 0.1em;
     cursor: pointer;
-    box-shadow: 0 0 15px var(--imperial-red-glow);
     transition: all 0.3s ease;
 }
 
-.scan-button:hover {
-    background: var(--imperial-red);
-    box-shadow: 0 0 25px var(--imperial-red-glow);
-    transform: scale(1.05);
+.category-button:hover {
+    background: rgba(0, 212, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
 }
 
-.scan-button:active {
-    transform: scale(0.98);
+.category-button.active {
+    background: var(--imperial-blue);
+    color: var(--bg-primary);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
 }
 
-.scan-status {
-    font-size: 0.85rem;
-    color: var(--imperial-green);
-    text-shadow: 0 0 8px var(--imperial-green-glow);
+.youtube-video-container {
+    width: 100%;
+    height: 400px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-.bounty-results {
-    max-height: 400px;
-    overflow-y: auto;
+.youtube-iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
-.bounty-placeholder {
+.youtube-placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     text-align: center;
     padding: var(--spacing-xl);
     color: var(--text-dim);
 }
 
-.bounty-placeholder .small {
+.youtube-placeholder .small {
     font-size: 0.8rem;
     margin-top: var(--spacing-sm);
-}
-
-.bounty-target {
-    padding: var(--spacing-md);
-    background: rgba(255, 0, 0, 0.1);
-    border: 1px solid var(--imperial-red);
-    border-radius: 4px;
-    margin-bottom: var(--spacing-md);
-}
-
-.bounty-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-sm);
-}
-
-.bounty-name {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--imperial-red);
-    text-shadow: 0 0 10px var(--imperial-red-glow);
-}
-
-.bounty-threat {
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 3px;
-}
-
-.bounty-threat.HIGH {
-    background: rgba(255, 0, 0, 0.3);
-    color: var(--imperial-red);
-    border: 1px solid var(--imperial-red);
-}
-
-.bounty-threat.MEDIUM {
-    background: rgba(255, 165, 0, 0.3);
-    color: var(--imperial-orange);
-    border: 1px solid var(--imperial-orange);
-}
-
-.bounty-threat.LOW {
-    background: rgba(0, 255, 65, 0.3);
-    color: var(--imperial-green);
-    border: 1px solid var(--imperial-green);
-}
-
-.bounty-threat.EXTREME {
-    background: rgba(255, 0, 0, 0.5);
-    color: #fff;
-    border: 1px solid var(--imperial-red);
-    animation: pulse 1s infinite;
-}
-
-.bounty-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-xs);
-    font-size: 0.85rem;
-    margin-bottom: var(--spacing-sm);
-}
-
-.bounty-detail {
-    color: var(--text-secondary);
-}
-
-.bounty-detail strong {
-    color: var(--text-primary);
-}
-
-.bounty-reward {
-    font-size: 1rem;
-    color: var(--imperial-yellow);
-    font-weight: bold;
-    text-align: right;
 }
 
 /* ============================================

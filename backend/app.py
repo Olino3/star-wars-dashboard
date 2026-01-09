@@ -6,7 +6,6 @@ Flask-based API serving system stats, weather, and bounty tracking data
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import os
-import random
 from utils.system_stats import get_system_stats
 from utils.weather import get_weather_data, get_galactic_date
 from utils.subway import get_subway_data
@@ -20,20 +19,6 @@ WEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'YOUR_API_KEY_HERE')
 WEATHER_LOCATION = os.getenv('WEATHER_LOCATION', 'London')
 SUBWAY_CITY = os.getenv('SUBWAY_CITY', 'NYC')
 SUBWAY_STATION_ID = os.getenv('SUBWAY_STATION_ID', 'D17')
-
-# Bounty Hunter Data
-BOUNTY_TARGETS = [
-    {"name": "Han Solo", "species": "Human", "last_seen": "Tatooine", "threat": "HIGH", "reward": 50000},
-    {"name": "Chewbacca", "species": "Wookiee", "last_seen": "Kashyyyk", "threat": "MEDIUM", "reward": 25000},
-    {"name": "Lando Calrissian", "species": "Human", "last_seen": "Cloud City", "threat": "LOW", "reward": 15000},
-    {"name": "Boba Fett", "species": "Human Clone", "last_seen": "Kamino", "threat": "EXTREME", "reward": 100000},
-    {"name": "Ahsoka Tano", "species": "Togruta", "last_seen": "Corvus", "threat": "HIGH", "reward": 75000},
-    {"name": "Din Djarin", "species": "Human", "last_seen": "Nevarro", "threat": "HIGH", "reward": 60000},
-    {"name": "Bo-Katan Kryze", "species": "Human", "last_seen": "Mandalore", "threat": "MEDIUM", "reward": 40000},
-    {"name": "Cad Bane", "species": "Duros", "last_seen": "Tatooine", "threat": "HIGH", "reward": 55000},
-    {"name": "Asajj Ventress", "species": "Dathomirian", "last_seen": "Dathomir", "threat": "EXTREME", "reward": 80000},
-    {"name": "Hondo Ohnaka", "species": "Weequay", "last_seen": "Florrum", "threat": "LOW", "reward": 10000},
-]
 
 RSS_FEEDS = [
     "https://www.starwars.com/news",
@@ -77,35 +62,6 @@ def api_chronometer():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/bounty/scan')
-def api_bounty_scan():
-    """
-    Bounty Hunter Tracking System
-    Returns a random target from the database
-    """
-    try:
-        # Randomly select 1-3 targets
-        num_targets = random.randint(1, 3)
-        targets = random.sample(BOUNTY_TARGETS, num_targets)
-
-        # Add scanning coordinates
-        for target in targets:
-            target['coordinates'] = generate_coordinates()
-            target['distance'] = round(random.uniform(0.5, 150.0), 1)  # parsecs
-            target['scan_confidence'] = random.randint(65, 99)
-
-        return jsonify({
-            "success": True,
-            "data": {
-                "targets": targets,
-                "scan_time": get_galactic_date()["galactic_standard"],
-                "scanner_status": "OPERATIONAL"
-            }
-        })
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
-
-
 @app.route('/api/news')
 def api_news():
     """
@@ -130,18 +86,6 @@ def api_subway():
         return jsonify({"success": True, "data": subway})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
-
-
-def generate_coordinates():
-    """Generate random Kuat sector coordinates"""
-    sectors = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"]
-    quadrant = random.randint(1, 9)
-    sector = random.choice(sectors)
-    x = round(random.uniform(-180, 180), 2)
-    y = round(random.uniform(-90, 90), 2)
-
-    return f"{sector}-{quadrant} [{x}, {y}]"
-
 
 @app.route('/health')
 def health():

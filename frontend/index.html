@@ -106,16 +106,18 @@
                     </div>
                 </div>
 
-                <div class="panel bounty-panel">
-                    <h2 class="panel-title">🎯 BOUNTY HUNTER TRACKING</h2>
-                    <div class="bounty-controls">
-                        <button id="scan-button" class="scan-button">INITIATE SCAN</button>
-                        <div id="scan-status" class="scan-status">Scanner Ready</div>
+                <div class="panel youtube-panel">
+                    <h2 class="panel-title">🎬 HOLONET TRANSMISSIONS</h2>
+                    <div class="youtube-controls">
+                        <button class="category-button active" data-category="scenery">SCENERY</button>
+                        <button class="category-button" data-category="battles">BATTLES</button>
+                        <button class="category-button" data-category="music">MUSIC</button>
+                        <button class="category-button" data-category="lore">LORE</button>
                     </div>
-                    <div id="bounty-results" class="bounty-results">
-                        <div class="bounty-placeholder">
-                            <p>⚠ AWAITING SCAN INITIATION</p>
-                            <p class="small">Click "INITIATE SCAN" to detect nearby targets</p>
+                    <div id="youtube-video-container" class="youtube-video-container">
+                        <div class="youtube-placeholder">
+                            <p>⚡ INITIALIZING HOLONET CONNECTION</p>
+                            <p class="small">Loading transmission feed...</p>
                         </div>
                     </div>
                 </div>
@@ -197,7 +199,7 @@
             name: 'KUAT SYSTEMS ENGINEERING'
         };
     </script>
-    <script src="js/bounty_tracker.js"></script>
+    <script src="js/youtube_feed.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

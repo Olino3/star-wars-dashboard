@@ -16,7 +16,7 @@ class KuatSystemsDashboard {
         this.subwayInterval = 60000;     // 1 minute
 
         // Initialize components
-        this.bountyTracker = null;
+        this.youtubeFeed = null;
         this.init();
     }
 
@@ -26,8 +26,8 @@ class KuatSystemsDashboard {
         // Set dashboard name from config
         this.setDashboardName();
 
-        // Initialize bounty tracker
-        this.bountyTracker = new BountyTracker(this.apiBaseUrl);
+        // Initialize YouTube feed
+        this.youtubeFeed = new YouTubeFeed();
 
         // Initial data fetch
         this.updateChronometer();
