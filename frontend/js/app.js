@@ -186,6 +186,9 @@ class KuatSystemsDashboard {
                 document.getElementById('wind-speed').textContent = `${weather.wind_speed} km/h`;
                 document.getElementById('visibility').textContent = `${weather.visibility} km`;
 
+                // Update weather animation based on description
+                this.updateWeatherAnimation(weather.description);
+
                 const statusBadge = document.getElementById('atmospheric-status');
                 statusBadge.textContent = weather.atmospheric_status;
 
@@ -201,6 +204,30 @@ class KuatSystemsDashboard {
         } catch (error) {
             console.error('Weather update error:', error);
         }
+    }
+
+    updateWeatherAnimation(description) {
+        const weatherAnimation = document.getElementById('weather-animation');
+        if (!weatherAnimation) return;
+
+        const desc = description.toLowerCase();
+        let weatherType = 'clear';
+
+        if (desc.includes('thunder') || desc.includes('storm')) {
+            weatherType = 'thunder';
+        } else if (desc.includes('snow') || desc.includes('sleet') || desc.includes('blizzard')) {
+            weatherType = 'snow';
+        } else if (desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower')) {
+            weatherType = 'rain';
+        } else if (desc.includes('fog') || desc.includes('mist') || desc.includes('haze') || desc.includes('smoke')) {
+            weatherType = 'fog';
+        } else if (desc.includes('cloud') || desc.includes('overcast') || desc.includes('partly')) {
+            weatherType = 'clouds';
+        } else if (desc.includes('clear') || desc.includes('sunny') || desc.includes('sun')) {
+            weatherType = 'clear';
+        }
+
+        weatherAnimation.setAttribute('data-weather', weatherType);
     }
 
     async updateNews() {

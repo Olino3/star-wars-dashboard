@@ -88,6 +88,17 @@
                     </div>
                     <div id="storage-status" class="status-badge nominal">NOMINAL</div>
                 </div>
+
+                <div class="panel info-panel">
+                    <h2 class="panel-title">ℹ️ MISSION BRIEFING</h2>
+                    <div class="mission-text">
+                        <p><strong>Objective:</strong> Monitor all systems across Kuat Systems Engineering.</p>
+                        <p><strong>Priority:</strong> Maintain operational readiness at all times.</p>
+                        <p><strong>Commander:</strong> You are in command of this tactical station.</p>
+                        <hr class="divider">
+                        <p class="small">May the Force be with you, Commander.</p>
+                    </div>
+                </div>
             </section>
 
             <!-- Center Column: Screensaver/News Feed -->
@@ -127,30 +138,89 @@
             <section class="right-panel">
                 <div class="panel weather-panel">
                     <h2 class="panel-title">🌍 ATMOSPHERIC DATA</h2>
-                    <div id="weather-location" class="weather-location">Coruscant Sector</div>
-                    <div class="weather-main">
-                        <div id="weather-temp" class="weather-temp">22°C</div>
-                        <div id="weather-desc" class="weather-desc">Partly Cloudy</div>
+                    <div class="weather-content">
+                        <div class="weather-visual">
+                            <div id="weather-animation" class="weather-animation" data-weather="clear">
+                                <!-- Sun -->
+                                <div class="weather-icon sun">
+                                    <div class="sun-core"></div>
+                                    <div class="sun-rays"></div>
+                                </div>
+                                <!-- Clouds -->
+                                <div class="weather-icon clouds">
+                                    <div class="cloud cloud-1"></div>
+                                    <div class="cloud cloud-2"></div>
+                                </div>
+                                <!-- Rain -->
+                                <div class="weather-icon rain">
+                                    <div class="rain-cloud"></div>
+                                    <div class="rain-drops">
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                    </div>
+                                </div>
+                                <!-- Snow -->
+                                <div class="weather-icon snow">
+                                    <div class="snow-cloud"></div>
+                                    <div class="snowflakes">
+                                        <div class="flake">❄</div>
+                                        <div class="flake">❄</div>
+                                        <div class="flake">❄</div>
+                                        <div class="flake">❄</div>
+                                        <div class="flake">❄</div>
+                                        <div class="flake">❄</div>
+                                    </div>
+                                </div>
+                                <!-- Thunderstorm -->
+                                <div class="weather-icon thunder">
+                                    <div class="thunder-cloud"></div>
+                                    <div class="lightning">⚡</div>
+                                    <div class="rain-drops thunder-rain">
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                        <div class="drop"></div>
+                                    </div>
+                                </div>
+                                <!-- Fog/Mist -->
+                                <div class="weather-icon fog">
+                                    <div class="fog-layer"></div>
+                                    <div class="fog-layer"></div>
+                                    <div class="fog-layer"></div>
+                                </div>
+                            </div>
+                            <div id="weather-temp" class="weather-temp">22°C</div>
+                            <div id="weather-desc" class="weather-desc">Partly Cloudy</div>
+                        </div>
+                        <div class="weather-info">
+                            <div id="weather-location" class="weather-location">Coruscant Sector</div>
+                            <div class="weather-details">
+                                <div class="weather-detail-item">
+                                    <span class="detail-label">Feels Like</span>
+                                    <span id="feels-like" class="detail-value">21°C</span>
+                                </div>
+                                <div class="weather-detail-item">
+                                    <span class="detail-label">Humidity</span>
+                                    <span id="humidity" class="detail-value">65%</span>
+                                </div>
+                                <div class="weather-detail-item">
+                                    <span class="detail-label">Wind Speed</span>
+                                    <span id="wind-speed" class="detail-value">15.5 km/h</span>
+                                </div>
+                                <div class="weather-detail-item">
+                                    <span class="detail-label">Visibility</span>
+                                    <span id="visibility" class="detail-value">10.0 km</span>
+                                </div>
+                            </div>
+                            <div id="atmospheric-status" class="status-badge optimal">ATMOSPHERIC CLARITY OPTIMAL</div>
+                        </div>
                     </div>
-                    <div class="weather-details">
-                        <div class="weather-detail-item">
-                            <span class="detail-label">Feels Like</span>
-                            <span id="feels-like" class="detail-value">21°C</span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span class="detail-label">Humidity</span>
-                            <span id="humidity" class="detail-value">65%</span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span class="detail-label">Wind Speed</span>
-                            <span id="wind-speed" class="detail-value">15.5 km/h</span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span class="detail-label">Visibility</span>
-                            <span id="visibility" class="detail-value">10.0 km</span>
-                        </div>
-                    </div>
-                    <div id="atmospheric-status" class="status-badge optimal">ATMOSPHERIC CLARITY OPTIMAL</div>
                 </div>
 
                 <div class="panel subway-panel">
@@ -163,17 +233,6 @@
                         </div>
                     </div>
                     <div id="subway-status" class="status-badge nominal">STANDBY</div>
-                </div>
-
-                <div class="panel info-panel">
-                    <h2 class="panel-title">ℹ️ MISSION BRIEFING</h2>
-                    <div class="mission-text">
-                        <p><strong>Objective:</strong> Monitor all systems across Kuat Systems Engineering.</p>
-                        <p><strong>Priority:</strong> Maintain operational readiness at all times.</p>
-                        <p><strong>Commander:</strong> You are in command of this tactical station.</p>
-                        <hr class="divider">
-                        <p class="small">May the Force be with you, Commander.</p>
-                    </div>
                 </div>
             </section>
         </main>
