@@ -37,17 +37,28 @@ BACKOFF_DELAYS = [1, 2, 4, 8]  # seconds
 
 def get_relative_time(date_str):
     """
-    Convert date string (M/D/YY format) to relative time string.
+    Convert date string (M/D/YY or M/D/YYYY format) to relative time string.
     
     Args:
-        date_str: Date in M/D/YY format (e.g., "1/7/26")
+        date_str: Date in M/D/YY or M/D/YYYY format (e.g., "1/7/26" or "1/7/2026")
         
     Returns:
         Relative time string (e.g., "2 days ago", "1 week ago")
     """
     try:
-        # Parse the date (handle 2-digit year)
-        parsed_date = datetime.strptime(date_str.strip(), '%m/%d/%y')
+        # Parse the date explicitly to avoid ambiguous 2-digit year handling
+        date_str_clean = date_str.strip()
+        match = re.match(r'^(\d{1,2})/(\d{1,2})/(\d{2,4})$', date_str_clean)
+        if not match:
+            raise ValueError(f"Unexpected date format: {date_str}")
+        month_str, day_str, year_str = match.groups()
+        month = int(month_str)
+        day = int(day_str)
+        year = int(year_str)
+        # Interpret 2-digit years as 2000-2099 to avoid Python's %y pivot behavior
+        if len(year_str) == 2:
+            year += 2000
+        parsed_date = datetime(year, month, day)
         now = datetime.now()
         diff = now - parsed_date
         
