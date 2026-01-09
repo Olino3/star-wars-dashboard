@@ -13,8 +13,9 @@ A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-
 - **💾 Memory Banks**: RAM usage with integrity indicators
 - **💿 Storage Systems**: Disk space capacity tracking
 - **🌍 Atmospheric Data**: Live weather information for your location
-- **📡 HoloNet News Feed**: Kuat systems news updates (expandable with RSS feeds)
-- **🎯 Bounty Hunter Tracking**: Secret scanning module for detecting targets
+- **📡 HoloNet News Feed**: Real-time Star Wars book/comic news from Youtini with intelligent caching
+- **🚇 Transit Network Monitor**: NYC subway real-time arrival times (with station filtering and direction separation)
+- **🎯 Bounty Hunter Tracking**: Interactive target scanning module
 - **🚀 Hyperspace Screensaver**: Animated screensaver that activates after 10 minutes of inactivity
 
 ### Aesthetics
@@ -100,6 +101,44 @@ WEATHER_LOCATION=London
 sudo systemctl restart kuat-systems-dashboard.service
 ```
 
+### NYC Subway Configuration (Optional)
+
+To enable real-time subway arrival times:
+
+1. Find your station ID at [MTA Stations CSV](http://web.mta.info/developers/data/nyct/subway/Stations.csv)
+2. Add to your `.env` file:
+
+```bash
+SUBWAY_CITY=NYC
+SUBWAY_STATION_ID=D17  # Example: 7th Ave-53rd St
+```
+
+3. Restart the service:
+
+```bash
+sudo systemctl restart kuat-systems-dashboard.service
+```
+
+The system will automatically:
+- Download and cache MTA station data on first run
+- Filter trains to only those stopping at your station
+- Separate arrivals by route and direction
+- Update every 60 seconds
+
+### News Cache Refresh (Optional)
+
+For optimal performance, set up hourly news cache refresh:
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add this line (adjust path to your installation):
+0 * * * * cd /home/pi/star-wars-dashboard/backend && /home/pi/star-wars-dashboard/venv/bin/python3 cron/refresh_news.py >> logs/youtini.log 2>&1
+```
+
+This pre-warms the news cache hourly, ensuring fast load times.
+
 ### Customize Update Intervals
 
 Edit `frontend/js/app.js` and modify these values (in milliseconds):
@@ -109,6 +148,7 @@ this.chronoInterval = 1000;      // Chronometer: 1 second
 this.systemInterval = 5000;      // System stats: 5 seconds
 this.weatherInterval = 300000;   // Weather: 5 minutes
 this.newsInterval = 600000;      // News: 10 minutes
+this.subwayInterval = 60000;     // Subway: 1 minute
 ```
 
 ### Customize Screensaver Timeout
@@ -121,7 +161,13 @@ this.timeout = 600000;  // 10 minutes in milliseconds
 
 ### Add Custom News Sources
 
-Edit `backend/app.py` and modify the `RSS_FEEDS` list or the `api_news()` function to add your own RSS feeds or custom news sources.
+The dashboard uses Youtini.com as its news source with intelligent web scraping and caching. The implementation includes:
+- Automatic cache refresh every 55 minutes
+- Exponential backoff retry logic
+- Parsing of article titles, dates, and categories
+- Optional cron job for hourly pre-warming
+
+If you want to modify the news source, edit `backend/utils/youtini.py` or replace with your own RSS parser in `backend/app.py`.
 
 ## 🗂️ Project Structure
 
@@ -130,9 +176,15 @@ star-wars-dashboard/
 ├── backend/
 │   ├── app.py                 # Flask API server
 │   ├── requirements.txt       # Python dependencies
+│   ├── cron/
+│   │   └── refresh_news.py    # Hourly news cache refresh script
+│   ├── data/
+│   │   └── stations.db        # NYC subway stations database
 │   └── utils/
 │       ├── system_stats.py    # System monitoring
-│       └── weather.py         # Weather data fetching
+│       ├── weather.py         # Weather data fetching
+│       ├── subway.py          # NYC subway real-time data
+│       └── youtini.py         # Star Wars news scraper with caching
 ├── frontend/
 │   ├── index.html            # Main dashboard HTML
 │   ├── css/
@@ -147,6 +199,7 @@ star-wars-dashboard/
 │   ├── autostart.desktop     # Autostart configuration
 │   └── launch-kiosk.sh       # Kiosk mode launcher (created by setup.sh)
 ├── setup.sh                  # Installation script
+├── run-dev.sh                # Development server launcher
 └── README.md                 # This file
 ```
 
@@ -253,18 +306,20 @@ The backend exposes these REST API endpoints:
 | `GET /api/weather` | Weather/atmospheric data |
 | `GET /api/chronometer` | Current time (Kuat Systems Standard + Earth) |
 | `GET /api/bounty/scan` | Bounty hunter target scan |
-| `GET /api/news` | HoloNet news feed |
+| `GET /api/news` | HoloNet news feed (Youtini articles) |
+| `GET /api/subway` | NYC subway real-time arrivals |
 | `GET /health` | Service health check |
 
 ## 🎯 Future Enhancements
 
-- [ ] Real RSS feed integration for Star Wars news
+- [ ] Support for other transit systems (London Underground, BART, etc.)
 - [ ] Multiple screensaver modes (Death Star schematics, star field)
 - [ ] Network monitoring (show active devices as "Fleet Status")
 - [ ] Smart home integration (control lights as "Reactor Controls")
 - [ ] Voice commands (via Google Assistant/Alexa)
 - [ ] Multiple themes (Imperial, Rebel Alliance, Mandalorian)
 - [ ] Data persistence (historical charts)
+- [ ] Multi-language support
 
 ## 🤝 Contributing
 
