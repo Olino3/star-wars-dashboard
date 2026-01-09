@@ -16,7 +16,7 @@ class KuatSystemsDashboard {
         this.subwayInterval = 60000;     // 1 minute
 
         // Initialize components
-        this.bountyTracker = null;
+        this.youtubeFeed = null;
         this.init();
     }
 
@@ -26,8 +26,8 @@ class KuatSystemsDashboard {
         // Set dashboard name from config
         this.setDashboardName();
 
-        // Initialize bounty tracker
-        this.bountyTracker = new BountyTracker(this.apiBaseUrl);
+        // Initialize YouTube feed
+        this.youtubeFeed = new YouTubeFeed();
 
         // Initial data fetch
         this.updateChronometer();
@@ -179,12 +179,15 @@ class KuatSystemsDashboard {
                 const weather = data.data;
 
                 document.getElementById('weather-location').textContent = weather.location;
-                document.getElementById('weather-temp').textContent = `${weather.temperature}°C`;
+                document.getElementById('weather-temp').textContent = `${weather.temperature}°F`;
                 document.getElementById('weather-desc').textContent = weather.description;
-                document.getElementById('feels-like').textContent = `${weather.feels_like}°C`;
+                document.getElementById('feels-like').textContent = `${weather.feels_like}°F`;
                 document.getElementById('humidity').textContent = `${weather.humidity}%`;
-                document.getElementById('wind-speed').textContent = `${weather.wind_speed} km/h`;
-                document.getElementById('visibility').textContent = `${weather.visibility} km`;
+                document.getElementById('wind-speed').textContent = `${weather.wind_speed} mph`;
+                document.getElementById('visibility').textContent = `${weather.visibility} mi`;
+
+                // Update weather animation based on description
+                this.updateWeatherAnimation(weather.description);
 
                 const statusBadge = document.getElementById('atmospheric-status');
                 statusBadge.textContent = weather.atmospheric_status;
@@ -201,6 +204,30 @@ class KuatSystemsDashboard {
         } catch (error) {
             console.error('Weather update error:', error);
         }
+    }
+
+    updateWeatherAnimation(description) {
+        const weatherAnimation = document.getElementById('weather-animation');
+        if (!weatherAnimation) return;
+
+        const desc = description.toLowerCase();
+        let weatherType = 'clear';
+
+        if (desc.includes('thunder') || desc.includes('storm')) {
+            weatherType = 'thunder';
+        } else if (desc.includes('snow') || desc.includes('sleet') || desc.includes('blizzard')) {
+            weatherType = 'snow';
+        } else if (desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower')) {
+            weatherType = 'rain';
+        } else if (desc.includes('fog') || desc.includes('mist') || desc.includes('haze') || desc.includes('smoke')) {
+            weatherType = 'fog';
+        } else if (desc.includes('cloud') || desc.includes('overcast') || desc.includes('partly')) {
+            weatherType = 'clouds';
+        } else if (desc.includes('clear') || desc.includes('sunny') || desc.includes('sun')) {
+            weatherType = 'clear';
+        }
+
+        weatherAnimation.setAttribute('data-weather', weatherType);
     }
 
     async updateNews() {

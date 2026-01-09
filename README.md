@@ -15,7 +15,7 @@ A Star Wars-themed tactical display optimized for Raspberry Pi and curved/ultra-
 - **🌍 Atmospheric Data**: Live weather information for your location
 - **📡 HoloNet News Feed**: Real-time Star Wars book/comic news from Youtini with intelligent caching
 - **🚇 Transit Network Monitor**: NYC subway real-time arrival times (with station filtering and direction separation)
-- **🎯 Bounty Hunter Tracking**: Interactive target scanning module
+- **🎬 HoloNet Transmissions**: Star Wars YouTube video feed with toggleable content (Scenery, Battles, Music, Lore)
 - **🚀 Hyperspace Screensaver**: Animated screensaver that activates after 10 minutes of inactivity
 
 ### Aesthetics
@@ -193,7 +193,7 @@ star-wars-dashboard/
 │   ├── js/
 │   │   ├── app.js            # Main application logic
 │   │   ├── screensaver.js    # Hyperspace screensaver
-│   │   └── bounty_tracker.js # Bounty tracking module
+│   │   └── youtube_feed.js   # YouTube video feed module
 │   └── fonts/                # Star Wars fonts (add your own)
 ├── config/
 │   ├── autostart.desktop     # Autostart configuration
@@ -305,9 +305,8 @@ The backend exposes these REST API endpoints:
 | `GET /api/system` | System statistics (CPU, RAM, Disk) |
 | `GET /api/weather` | Weather/atmospheric data |
 | `GET /api/chronometer` | Current time (Kuat Systems Standard + Earth) |
-| `GET /api/bounty/scan` | Bounty hunter target scan |
-| `GET /api/news` | HoloNet news feed (Youtini articles) |
-| `GET /api/subway` | NYC subway real-time arrivals |
+| `GET /api/news` | HoloNet news feed |
+| `GET /api/subway` | Transit/subway arrival times |
 | `GET /health` | Service health check |
 
 ## 🎯 Future Enhancements
