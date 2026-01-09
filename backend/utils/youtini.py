@@ -34,6 +34,10 @@ REQUEST_TIMEOUT = 10
 MAX_RETRIES = 4
 BACKOFF_DELAYS = [1, 2, 4, 8]  # seconds
 
+# Title filtering configuration
+MIN_TITLE_LENGTH = 10  # Minimum length to filter out empty/navigation links
+MAX_TITLE_LENGTH = 80  # Maximum length to prefer cleaner titles
+
 
 def get_relative_time(date_str):
     """
@@ -191,7 +195,7 @@ def parse_articles(html_content, limit=5):
                 title = link.get_text(strip=True)
             
             # Skip navigation/empty links and image-only links
-            if not title or len(title) < 10:
+            if not title or len(title) < MIN_TITLE_LENGTH:
                 continue
             
             # Skip non-article titles (like author names, categories)
@@ -199,8 +203,8 @@ def parse_articles(html_content, limit=5):
                 continue
             
             # Prefer shorter/cleaner titles (skip links with description appended)
-            # Clean titles are typically < 80 chars
-            if len(title) > 80:
+            # Clean titles are typically < MAX_TITLE_LENGTH chars
+            if len(title) > MAX_TITLE_LENGTH:
                 continue
                 
             seen_urls.add(url)
