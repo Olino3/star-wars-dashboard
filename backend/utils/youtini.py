@@ -6,7 +6,7 @@ with caching, exponential backoff, and logging
 
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 import time
 import re
