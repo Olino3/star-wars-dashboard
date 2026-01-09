@@ -223,9 +223,9 @@ class KuatSystemsDashboard {
                     // Create title with optional link using DOM APIs to prevent XSS
                     if (item.url) {
                         const link = document.createElement('a');
-                        link.href = item.url;
-                        link.target = '_blank';
-                        link.rel = 'noopener noreferrer';
+                        link.setAttribute('href', item.url);
+                        link.setAttribute('target', '_blank');
+                        link.setAttribute('rel', 'noopener noreferrer');
                         link.className = 'news-link';
                         link.textContent = item.title;
                         titleDiv.appendChild(link);
