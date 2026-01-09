@@ -232,8 +232,8 @@ def parse_articles(html_content, limit=5):
         logger.info(f"Successfully parsed {len(articles)} articles")
         return articles
         
-    except Exception as e:
-        logger.error(f"Failed to parse articles HTML: {e}")
+    except Exception:
+        logger.exception("Failed to parse articles HTML")
         return []
 
 
