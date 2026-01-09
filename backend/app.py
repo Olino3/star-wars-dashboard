@@ -1,6 +1,6 @@
 """
 Kuat Systems Dashboard - Backend API Server
-Flask-based API serving system stats, weather, and bounty tracking data
+Flask-based API serving system stats, weather, and transit data
 """
 
 from flask import Flask, jsonify, send_from_directory

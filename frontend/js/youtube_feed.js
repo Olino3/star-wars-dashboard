@@ -58,6 +58,12 @@ class YouTubeFeed {
     }
 
     loadVideo() {
+        // Validate category exists
+        if (!this.videos[this.currentCategory]) {
+            console.error(`Invalid category: ${this.currentCategory}`);
+            this.currentCategory = 'scenery';
+        }
+        
         const videoId = this.videos[this.currentCategory][this.currentVideoIndex];
         const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
         
@@ -66,7 +72,7 @@ class YouTubeFeed {
                 width="100%"
                 height="100%"
                 src="${embedUrl}"
-                frameborder="0"
+                style="border: none;"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen
                 class="youtube-iframe"
