@@ -1,5 +1,12 @@
 # Subway Feature Update: Station Filtering & Direction Separation
 
+> **Note:** This feature has been fully implemented and integrated into the dashboard. This document serves as technical reference documentation for the subway feature implementation.
+> 
+> For user documentation, see:
+> - [README.md](README.md) - User guide and configuration
+> - [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) - Architecture overview
+> - [QUICK_START.md](QUICK_START.md) - Quick reference
+
 ## Overview
 Updated the NYC subway feature to:
 1. **Filter trains by station** - Only show trains that actually stop at the configured station (not all nearby trains)
