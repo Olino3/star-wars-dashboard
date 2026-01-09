@@ -108,23 +108,23 @@ class KuatSystemsDashboard {
 
         const statusBadge = document.getElementById('reactor-status');
         statusBadge.textContent = reactor.status;
-        statusBadge.className = `status-badge ${reactor.status.toLowerCase()}`;
+        // KSE Theme: Use kse-status-badge class
+        statusBadge.className = `kse-status-badge ${reactor.status.toLowerCase()}`;
 
         // Alert if temperature is critical
         if (reactor.alert) {
-            statusBadge.style.animation = 'pulse 1s infinite';
-        } else {
-            statusBadge.style.animation = 'none';
+            statusBadge.classList.add('alert');
         }
 
-        // Update bar color based on stability
+        // Update bar class based on stability (KSE Theme)
         const bar = document.getElementById('reactor-stability-bar');
+        bar.className = 'kse-progress-bar';
         if (reactor.stability >= 70) {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-green) 0%, var(--imperial-blue) 100%)';
+            bar.classList.add('optimal');
         } else if (reactor.stability >= 40) {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-yellow) 0%, var(--imperial-orange) 100%)';
+            bar.classList.add('caution');
         } else {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-red) 0%, var(--imperial-orange) 100%)';
+            bar.classList.add('alert');
         }
     }
 
@@ -136,16 +136,17 @@ class KuatSystemsDashboard {
 
         const statusBadge = document.getElementById('memory-status');
         statusBadge.textContent = memory.status;
-        statusBadge.className = `status-badge ${memory.status.toLowerCase()}`;
+        statusBadge.className = `kse-status-badge ${memory.status.toLowerCase()}`;
 
-        // Update bar color
+        // Update bar class (KSE Theme)
         const bar = document.getElementById('memory-integrity-bar');
+        bar.className = 'kse-progress-bar';
         if (memory.integrity >= 70) {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-green) 0%, var(--imperial-blue) 100%)';
+            bar.classList.add('optimal');
         } else if (memory.integrity >= 40) {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-yellow) 0%, var(--imperial-orange) 100%)';
+            bar.classList.add('caution');
         } else {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-red) 0%, var(--imperial-orange) 100%)';
+            bar.classList.add('alert');
         }
     }
 
@@ -157,16 +158,17 @@ class KuatSystemsDashboard {
 
         const statusBadge = document.getElementById('storage-status');
         statusBadge.textContent = storage.status;
-        statusBadge.className = `status-badge ${storage.status.toLowerCase()}`;
+        statusBadge.className = `kse-status-badge ${storage.status.toLowerCase()}`;
 
-        // Update bar color
+        // Update bar class (KSE Theme)
         const bar = document.getElementById('storage-capacity-bar');
+        bar.className = 'kse-progress-bar';
         if (storage.capacity >= 70) {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-green) 0%, var(--imperial-blue) 100%)';
+            bar.classList.add('optimal');
         } else if (storage.capacity >= 40) {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-yellow) 0%, var(--imperial-orange) 100%)';
+            bar.classList.add('caution');
         } else {
-            bar.style.background = 'linear-gradient(90deg, var(--imperial-red) 0%, var(--imperial-orange) 100%)';
+            bar.classList.add('alert');
         }
     }
 
@@ -189,13 +191,13 @@ class KuatSystemsDashboard {
                 const statusBadge = document.getElementById('atmospheric-status');
                 statusBadge.textContent = weather.atmospheric_status;
 
-                // Set badge color based on weather status
+                // Set badge color based on weather status (KSE Theme)
                 if (weather.atmospheric_status.includes('OPTIMAL') || weather.atmospheric_status.includes('CLEAR')) {
-                    statusBadge.className = 'status-badge optimal';
+                    statusBadge.className = 'kse-status-badge optimal';
                 } else if (weather.atmospheric_status.includes('STORM') || weather.atmospheric_status.includes('REDUCED')) {
-                    statusBadge.className = 'status-badge degraded';
+                    statusBadge.className = 'kse-status-badge caution';
                 } else {
-                    statusBadge.className = 'status-badge nominal';
+                    statusBadge.className = 'kse-status-badge nominal';
                 }
             }
         } catch (error) {
@@ -212,14 +214,17 @@ class KuatSystemsDashboard {
                 const newsFeed = document.getElementById('news-feed');
                 newsFeed.innerHTML = '';
 
-                data.data.forEach(item => {
+                data.data.forEach((item, index) => {
                     const newsItem = document.createElement('div');
-                    newsItem.className = 'news-item fade-in';
+                    newsItem.className = 'kse-news-item fade-in';
+                    // Add priority indicator for first item
+                    const priority = index === 0 ? '<div class="kse-news-priority">◆ PRIORITY</div>' : '';
                     newsItem.innerHTML = `
-                        <div class="news-title">${item.title}</div>
-                        <div class="news-meta">
-                            <span class="news-source">${item.source}</span>
-                            <span class="news-time">${item.time}</span>
+                        ${priority}
+                        <div class="kse-news-title">${item.title}</div>
+                        <div class="kse-news-meta">
+                            <span class="kse-news-source">${item.source}</span>
+                            <span class="kse-news-time">${item.time}</span>
                         </div>
                     `;
                     newsFeed.appendChild(newsItem);
@@ -286,13 +291,13 @@ class KuatSystemsDashboard {
                 const statusBadge = document.getElementById('subway-status');
                 statusBadge.textContent = subway.status;
 
-                // Set badge color based on status
+                // Set badge color based on status (KSE Theme)
                 if (subway.status.includes('OPERATIONAL')) {
-                    statusBadge.className = 'status-badge optimal';
+                    statusBadge.className = 'kse-status-badge optimal';
                 } else if (subway.status.includes('DELAY')) {
-                    statusBadge.className = 'status-badge degraded';
+                    statusBadge.className = 'kse-status-badge caution';
                 } else {
-                    statusBadge.className = 'status-badge nominal';
+                    statusBadge.className = 'kse-status-badge nominal';
                 }
             }
         } catch (error) {

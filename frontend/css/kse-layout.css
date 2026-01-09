@@ -1,0 +1,622 @@
+/* ============================================
+   KSE LAYOUT - CURVED DISPLAY OPTIMIZED
+   Ultra-wide & Standard Support
+   ============================================ */
+
+/* ============================================
+   HEADER STYLES
+   ============================================ */
+.kse-header {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: center;
+    padding: var(--kse-space-md) var(--kse-space-xl);
+    background: linear-gradient(
+        180deg,
+        rgba(10, 10, 10, 0.95) 0%,
+        rgba(15, 15, 15, 0.9) 100%
+    );
+    border-bottom: 1px solid var(--kuat-gold-dim);
+    box-shadow: 
+        0 2px 20px rgba(0, 0, 0, 0.5),
+        inset 0 -1px 0 rgba(201, 162, 39, 0.2);
+    position: relative;
+    z-index: 100;
+}
+
+/* Subtle gold accent line at bottom */
+.kse-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--kuat-gold-dim) 30%,
+        var(--kuat-gold) 50%,
+        var(--kuat-gold-dim) 70%,
+        transparent 100%
+    );
+}
+
+/* Logo Section */
+.kse-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--kse-space-md);
+}
+
+.kse-logo-icon svg {
+    filter: drop-shadow(0 0 8px var(--kuat-gold-glow));
+}
+
+.kse-logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.kse-logo-main {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--kuat-gold);
+    text-shadow: 0 0 10px var(--kuat-gold-glow);
+}
+
+.kse-logo-sub {
+    font-family: 'Courier New', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--kse-text-tertiary);
+    text-transform: uppercase;
+}
+
+/* Chronometer */
+.kse-header-center {
+    display: flex;
+    justify-content: center;
+}
+
+.kse-chronometer {
+    text-align: center;
+    padding: var(--kse-space-sm) var(--kse-space-lg);
+}
+
+.kse-chrono-label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--kse-text-tertiary);
+    margin-bottom: var(--kse-space-xs);
+}
+
+.kse-chrono-primary {
+    font-size: 1.4rem !important;
+    letter-spacing: 0.1em;
+}
+
+.kse-chrono-secondary {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--kse-text-secondary);
+    margin-top: var(--kse-space-xs);
+}
+
+/* System Status */
+.kse-header-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--kse-space-lg);
+}
+
+.kse-system-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--kse-space-xs);
+}
+
+.kse-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--kse-space-sm);
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+
+.kse-status-indicator.optimal {
+    color: var(--kse-optimal);
+}
+
+.kse-status-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    animation: kse-pulse-indicator 2s ease-in-out infinite;
+}
+
+@keyframes kse-pulse-indicator {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+.kse-aurebesh-tag {
+    font-family: 'Aurebesh', 'Courier New', monospace;
+    font-size: 0.6rem;
+    color: var(--kse-aurebesh-color);
+    letter-spacing: 0.1em;
+}
+
+/* ============================================
+   MAIN GRID LAYOUT
+   ============================================ */
+.kse-main-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(500px, 1.8fr) minmax(280px, 1fr);
+    gap: var(--kse-space-lg);
+    padding: var(--kse-space-lg) var(--kse-space-xl);
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    /* Subtle radial gradient for depth */
+    background: radial-gradient(
+        ellipse 80% 60% at 50% 40%,
+        rgba(20, 20, 20, 0.3) 0%,
+        transparent 70%
+    );
+}
+
+/* Column Containers */
+.kse-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-md);
+}
+
+/* Panel sizing */
+.kse-panel-large {
+    flex: 1.2;
+    min-height: 280px;
+}
+
+/* ============================================
+   DATA DISPLAY COMPONENTS
+   ============================================ */
+.kse-data-group {
+    margin-bottom: var(--kse-space-md);
+}
+
+.kse-value-inline {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--kse-cyan);
+    text-shadow: 0 0 6px var(--kse-cyan-glow);
+    margin-left: var(--kse-space-sm);
+}
+
+/* ============================================
+   NEWS FEED STYLES
+   ============================================ */
+.kse-news-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-sm);
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.kse-news-item {
+    padding: var(--kse-space-md);
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 2px solid var(--kuat-gold-dim);
+    transition: all 0.3s ease;
+}
+
+.kse-news-item:hover {
+    background: rgba(201, 162, 39, 0.05);
+    border-left-color: var(--kuat-gold);
+}
+
+.kse-news-priority {
+    font-family: 'Courier New', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--kuat-gold);
+    margin-bottom: var(--kse-space-xs);
+}
+
+.kse-news-title {
+    font-size: 0.85rem;
+    color: var(--kse-text-primary);
+    line-height: 1.4;
+    margin-bottom: var(--kse-space-sm);
+}
+
+.kse-news-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    color: var(--kse-text-tertiary);
+}
+
+/* ============================================
+   BOUNTY / TARGET ACQUISITION
+   ============================================ */
+.kse-bounty-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--kse-space-md);
+}
+
+.kse-scan-status {
+    display: flex;
+    align-items: center;
+    gap: var(--kse-space-sm);
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--kse-text-secondary);
+}
+
+.kse-scan-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--kse-optimal);
+    animation: kse-pulse-indicator 2s ease-in-out infinite;
+}
+
+.kse-bounty-results {
+    min-height: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.kse-bounty-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--kse-space-xl);
+    color: var(--kse-text-tertiary);
+}
+
+.kse-placeholder-icon {
+    font-size: 2rem;
+    color: var(--kuat-gold-dim);
+    margin-bottom: var(--kse-space-md);
+    animation: kse-pulse 3s ease-in-out infinite;
+}
+
+.kse-placeholder-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--kse-space-xs);
+}
+
+.kse-placeholder-sub {
+    font-size: 0.7rem;
+    color: var(--kse-text-dim);
+}
+
+/* ============================================
+   WEATHER / ATMOSPHERIC DISPLAY
+   ============================================ */
+.kse-weather-display {
+    text-align: center;
+}
+
+.kse-weather-location {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--kse-text-secondary);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--kse-space-md);
+}
+
+.kse-weather-primary {
+    margin-bottom: var(--kse-space-lg);
+}
+
+.kse-weather-primary .kse-telemetry {
+    font-size: 2.5rem;
+}
+
+.kse-weather-desc {
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: var(--kse-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: var(--kse-space-xs);
+}
+
+.kse-weather-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--kse-space-md);
+    margin-bottom: var(--kse-space-md);
+}
+
+.kse-weather-stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-xs);
+}
+
+.kse-stat-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: var(--kse-cyan);
+    text-shadow: 0 0 6px var(--kse-cyan-glow);
+}
+
+/* ============================================
+   TRANSIT / SUBWAY DISPLAY
+   ============================================ */
+.kse-transit-display {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-md);
+}
+
+.kse-station-name {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--kse-cyan);
+    text-align: center;
+    padding: var(--kse-space-sm);
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.kse-transit-lines {
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-sm);
+}
+
+.kse-transit-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--kse-space-lg);
+    color: var(--kse-text-tertiary);
+}
+
+.kse-transit-icon {
+    font-size: 1.5rem;
+    color: var(--kse-cyan-dim);
+    margin-bottom: var(--kse-space-sm);
+    animation: kse-pulse 3s ease-in-out infinite;
+}
+
+/* ============================================
+   MISSION BRIEFING
+   ============================================ */
+.kse-mission-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-md);
+}
+
+.kse-mission-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kse-space-xs);
+}
+
+.kse-mission-label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--kuat-gold-dim);
+    text-transform: uppercase;
+}
+
+.kse-mission-value {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--kse-text-secondary);
+}
+
+.kse-mission-footer {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--kse-text-dim);
+    text-align: center;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.kse-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    padding: var(--kse-space-sm) var(--kse-space-xl);
+    background: linear-gradient(
+        180deg,
+        rgba(15, 15, 15, 0.9) 0%,
+        rgba(10, 10, 10, 0.95) 100%
+    );
+    border-top: 1px solid var(--kuat-gold-dim);
+    position: relative;
+    z-index: 100;
+}
+
+/* Subtle gold accent line at top */
+.kse-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--kuat-gold-dim) 30%,
+        var(--kuat-gold) 50%,
+        var(--kuat-gold-dim) 70%,
+        transparent 100%
+    );
+}
+
+.kse-footer-left {
+    text-align: left;
+}
+
+.kse-footer-center {
+    text-align: center;
+}
+
+.kse-footer-right {
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--kse-space-md);
+}
+
+.kse-footer-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--kse-text-dim);
+}
+
+.kse-footer-timestamp {
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    color: var(--kse-text-tertiary);
+}
+
+.kse-footer-version {
+    font-family: 'Courier New', monospace;
+    font-size: 0.55rem;
+    color: var(--kuat-gold-dim);
+    padding: 2px 6px;
+    border: 1px solid var(--kuat-gold-dim);
+    opacity: 0.6;
+}
+
+/* ============================================
+   CURVED DISPLAY RESPONSIVE
+   ============================================ */
+
+/* Ultra-wide (21:9 and beyond) */
+@media (min-aspect-ratio: 21/9) {
+    .kse-main-grid {
+        grid-template-columns: minmax(320px, 1.2fr) minmax(600px, 2fr) minmax(320px, 1.2fr);
+        padding: var(--kse-space-lg) 4vw;
+    }
+    
+    .kse-header,
+    .kse-footer {
+        padding-left: 4vw;
+        padding-right: 4vw;
+    }
+    
+    /* Slight scale increase for edge panels (curve compensation) */
+    .kse-panel-edge-left,
+    .kse-panel-edge-right {
+        transform: scale(1.01);
+    }
+}
+
+/* Super ultra-wide (32:9) */
+@media (min-aspect-ratio: 32/9) {
+    .kse-main-grid {
+        padding: var(--kse-space-lg) 6vw;
+    }
+    
+    .kse-header,
+    .kse-footer {
+        padding-left: 6vw;
+        padding-right: 6vw;
+    }
+}
+
+/* Standard widescreen */
+@media (max-width: 1600px) {
+    .kse-main-grid {
+        grid-template-columns: minmax(250px, 1fr) minmax(450px, 1.6fr) minmax(250px, 1fr);
+        gap: var(--kse-space-md);
+    }
+}
+
+/* Tablet/smaller screens */
+@media (max-width: 1200px) {
+    .kse-main-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .kse-column-center {
+        grid-column: span 2;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .kse-main-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .kse-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--kse-space-md);
+    }
+    
+    .kse-header-left,
+    .kse-header-right {
+        justify-content: center;
+    }
+}
+
+/* ============================================
+   SCROLLBAR (KSE THEMED)
+   ============================================ */
+.kse-main-grid::-webkit-scrollbar,
+.kse-news-feed::-webkit-scrollbar,
+.kse-bounty-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.kse-main-grid::-webkit-scrollbar-track,
+.kse-news-feed::-webkit-scrollbar-track,
+.kse-bounty-results::-webkit-scrollbar-track {
+    background: var(--kse-void);
+}
+
+.kse-main-grid::-webkit-scrollbar-thumb,
+.kse-news-feed::-webkit-scrollbar-thumb,
+.kse-bounty-results::-webkit-scrollbar-thumb {
+    background: var(--kuat-gold-dim);
+    border-radius: 3px;
+}
+
+.kse-main-grid::-webkit-scrollbar-thumb:hover,
+.kse-news-feed::-webkit-scrollbar-thumb:hover,
+.kse-bounty-results::-webkit-scrollbar-thumb:hover {
+    background: var(--kuat-gold);
+}

@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KSE // Kuat Systems Engineering - Orbital Command</title>
+    
+    <!-- KSE Theme & Styles -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/kse-theme.css">
     <link rel="stylesheet" href="css/kse-layout.css">
     <link rel="stylesheet" href="css/animations.css">
     
-    <!-- Aurebesh Font (optional - decorative) -->
+    <!-- Preload fonts for performance -->
     <style>
+        /* Fallback for Aurebesh - loads decorative font if available */
         @font-face {
             font-family: 'Aurebesh';
             src: url('fonts/Aurebesh.woff2') format('woff2'),
@@ -20,20 +23,23 @@
     </style>
 </head>
 <body class="kse-hex-grid">
-    <!-- Starfield Background -->
+    <!-- Starfield Background Layer -->
     <canvas id="starfield-canvas" class="starfield-layer"></canvas>
     
-    <!-- Main Dashboard -->
+    <!-- Main Dashboard Container -->
     <div id="dashboard" class="dashboard kse-curved-optimize">
-        <!-- Scanline Overlay Effect -->
+        <!-- Subtle Scanline Overlay (reduced for Pi) -->
         <div class="scanline-overlay"></div>
 
-        <!-- KSE Command Header -->
+        <!-- ════════════════════════════════════════════════════════════
+             KSE COMMAND HEADER
+             ════════════════════════════════════════════════════════════ -->
         <header class="kse-header">
             <div class="kse-header-left">
                 <div class="kse-logo">
                     <div class="kse-logo-icon">
                         <svg viewBox="0 0 40 40" width="36" height="36">
+                            <!-- KSE Hexagonal Emblem -->
                             <polygon points="20,2 37,11 37,29 20,38 3,29 3,11" 
                                      fill="none" stroke="var(--kuat-gold)" stroke-width="1.5"/>
                             <polygon points="20,8 31,14 31,26 20,32 9,26 9,14" 
@@ -47,6 +53,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="kse-header-center">
                 <div class="kse-chronometer kse-brackets">
                     <div class="kse-chrono-label">GALACTIC STANDARD TIME</div>
@@ -54,6 +61,7 @@
                     <div id="earth-time" class="kse-chrono-secondary">2026-01-08 00:00:00</div>
                 </div>
             </div>
+            
             <div class="kse-header-right">
                 <div class="kse-system-status">
                     <div class="kse-status-indicator optimal">
@@ -65,75 +73,105 @@
             </div>
         </header>
 
-        <!-- KSE Main Command Grid -->
+        <!-- ════════════════════════════════════════════════════════════
+             KSE MAIN COMMAND GRID
+             Optimized for curved ultra-wide displays
+             ════════════════════════════════════════════════════════════ -->
         <main class="kse-main-grid">
-            <!-- Left Column: Core Systems Telemetry -->
+            
+            <!-- ════════════════════════════════════════
+                 LEFT COLUMN: CORE SYSTEMS TELEMETRY
+                 ════════════════════════════════════════ -->
             <section class="kse-column kse-column-left kse-panel-edge-left">
+                
+                <!-- Reactor Core Status -->
                 <div class="kse-panel kse-scan-effect">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">REACTOR CORE TELEMETRY</span>
                         <span class="kse-aurebesh-label">RSIK</span>
                     </div>
-                    <div class="kse-data-group">
-                        <span class="kse-data-label">CORE TEMPERATURE</span>
-                        <span id="reactor-temp" class="kse-telemetry kse-flicker">42.0°C</span>
-                    </div>
-                    <div class="kse-data-group">
-                        <span class="kse-data-label">STABILITY INDEX</span>
-                        <div class="kse-progress-container">
-                            <div id="reactor-stability-bar" class="kse-progress-bar optimal" style="width: 85%"></div>
+                    
+                    <div class="kse-reactor-display">
+                        <div class="kse-data-group">
+                            <span class="kse-data-label">CORE TEMPERATURE</span>
+                            <span id="reactor-temp" class="kse-telemetry kse-flicker">42.0°C</span>
                         </div>
-                        <span id="reactor-stability" class="kse-value-inline">85%</span>
+                        
+                        <div class="kse-data-group">
+                            <span class="kse-data-label">STABILITY INDEX</span>
+                            <div class="kse-progress-container">
+                                <div id="reactor-stability-bar" class="kse-progress-bar optimal" style="width: 85%"></div>
+                            </div>
+                            <span id="reactor-stability" class="kse-value-inline">85%</span>
+                        </div>
+                        
+                        <div id="reactor-status" class="kse-status-badge optimal">OPTIMAL</div>
                     </div>
-                    <div id="reactor-status" class="kse-status-badge optimal">OPTIMAL</div>
                 </div>
 
+                <!-- Datacore Integrity -->
                 <div class="kse-panel kse-scan-effect">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">DATACORE INTEGRITY ARRAY</span>
                         <span class="kse-aurebesh-label">DSKA</span>
                     </div>
-                    <div class="kse-data-group">
-                        <span class="kse-data-label">INTEGRITY MATRIX</span>
-                        <div class="kse-progress-container">
-                            <div id="memory-integrity-bar" class="kse-progress-bar" style="width: 75%"></div>
+                    
+                    <div class="kse-memory-display">
+                        <div class="kse-data-group">
+                            <span class="kse-data-label">INTEGRITY MATRIX</span>
+                            <div class="kse-progress-container">
+                                <div id="memory-integrity-bar" class="kse-progress-bar" style="width: 75%"></div>
+                            </div>
+                            <span id="memory-integrity" class="kse-value-inline">75%</span>
                         </div>
-                        <span id="memory-integrity" class="kse-value-inline">75%</span>
+                        
+                        <div class="kse-data-group">
+                            <span class="kse-data-label">ALLOCATION</span>
+                            <span id="memory-usage" class="kse-telemetry amber kse-flicker">2.4 / 4.0 GB</span>
+                        </div>
+                        
+                        <div id="memory-status" class="kse-status-badge nominal">NOMINAL</div>
                     </div>
-                    <div class="kse-data-group">
-                        <span class="kse-data-label">ALLOCATION</span>
-                        <span id="memory-usage" class="kse-telemetry amber kse-flicker">2.4 / 4.0 GB</span>
-                    </div>
-                    <div id="memory-status" class="kse-status-badge nominal">NOMINAL</div>
                 </div>
 
+                <!-- Cargo Hold / Storage -->
                 <div class="kse-panel kse-scan-effect">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">CARGO HOLD MANIFEST</span>
                         <span class="kse-aurebesh-label">KRGO</span>
                     </div>
-                    <div class="kse-data-group">
-                        <span class="kse-data-label">CAPACITY UTILIZATION</span>
-                        <div class="kse-progress-container">
-                            <div id="storage-capacity-bar" class="kse-progress-bar" style="width: 60%"></div>
+                    
+                    <div class="kse-storage-display">
+                        <div class="kse-data-group">
+                            <span class="kse-data-label">CAPACITY UTILIZATION</span>
+                            <div class="kse-progress-container">
+                                <div id="storage-capacity-bar" class="kse-progress-bar" style="width: 60%"></div>
+                            </div>
+                            <span id="storage-capacity" class="kse-value-inline">60%</span>
                         </div>
-                        <span id="storage-capacity" class="kse-value-inline">60%</span>
+                        
+                        <div class="kse-data-group">
+                            <span class="kse-data-label">AVAILABLE</span>
+                            <span id="storage-usage" class="kse-telemetry kse-flicker">12.5 / 32.0 GB</span>
+                        </div>
+                        
+                        <div id="storage-status" class="kse-status-badge nominal">NOMINAL</div>
                     </div>
-                    <div class="kse-data-group">
-                        <span class="kse-data-label">AVAILABLE</span>
-                        <span id="storage-usage" class="kse-telemetry kse-flicker">12.5 / 32.0 GB</span>
-                    </div>
-                    <div id="storage-status" class="kse-status-badge nominal">NOMINAL</div>
                 </div>
             </section>
 
-            <!-- Center Column: Intel & Operations -->
+            <!-- ════════════════════════════════════════
+                 CENTER COLUMN: INTEL & OPERATIONS
+                 ════════════════════════════════════════ -->
             <section class="kse-column kse-column-center kse-panel-center">
+                
+                <!-- HoloNet Tactical Briefing -->
                 <div class="kse-panel kse-panel-large">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">HOLONET TACTICAL BRIEFING</span>
                         <span class="kse-aurebesh-label">HLNT</span>
                     </div>
+                    
                     <div id="news-feed" class="kse-news-feed">
                         <div class="kse-news-item">
                             <div class="kse-news-priority">◆ PRIORITY</div>
@@ -146,11 +184,13 @@
                     </div>
                 </div>
 
+                <!-- Target Acquisition / Bounty Scanner -->
                 <div class="kse-panel">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">TARGET ACQUISITION ARRAY</span>
                         <span class="kse-aurebesh-label">TRGT</span>
                     </div>
+                    
                     <div class="kse-bounty-controls">
                         <button id="scan-button" class="kse-button danger">
                             <span class="kse-button-icon">⬡</span>
@@ -161,7 +201,9 @@
                             <span>Sensors on standby</span>
                         </div>
                     </div>
+                    
                     <div class="kse-divider"></div>
+                    
                     <div id="bounty-results" class="kse-bounty-results">
                         <div class="kse-bounty-placeholder kse-brackets">
                             <div class="kse-placeholder-icon">◇</div>
@@ -172,19 +214,26 @@
                 </div>
             </section>
 
-            <!-- Right Column: Environmental & Transit -->
+            <!-- ════════════════════════════════════════
+                 RIGHT COLUMN: ENVIRONMENTAL & TRANSIT
+                 ════════════════════════════════════════ -->
             <section class="kse-column kse-column-right kse-panel-edge-right">
+                
+                <!-- Atmospheric Analysis -->
                 <div class="kse-panel kse-scan-effect">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">PLANETARY ATMOSPHERIC ANALYSIS</span>
                         <span class="kse-aurebesh-label">ATMS</span>
                     </div>
+                    
                     <div class="kse-weather-display">
                         <div id="weather-location" class="kse-weather-location">Coruscant Sector</div>
+                        
                         <div class="kse-weather-primary">
                             <span id="weather-temp" class="kse-telemetry gold">22°C</span>
                             <span id="weather-desc" class="kse-weather-desc">Atmospheric Scan Active</span>
                         </div>
+                        
                         <div class="kse-weather-grid">
                             <div class="kse-weather-stat">
                                 <span class="kse-data-label">PERCEIVED</span>
@@ -203,17 +252,21 @@
                                 <span id="visibility" class="kse-stat-value">10.0 km</span>
                             </div>
                         </div>
+                        
                         <div id="atmospheric-status" class="kse-status-badge optimal">ATMOSPHERIC CLARITY OPTIMAL</div>
                     </div>
                 </div>
 
+                <!-- Orbital Transit Beacon -->
                 <div class="kse-panel kse-scan-effect">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">ORBITAL TRANSIT BEACON</span>
                         <span class="kse-aurebesh-label">TRNS</span>
                     </div>
+                    
                     <div class="kse-transit-display">
                         <div id="subway-station" class="kse-station-name">Awaiting transit uplink...</div>
+                        
                         <div id="subway-lines" class="kse-transit-lines">
                             <div class="kse-transit-placeholder">
                                 <span class="kse-transit-icon">⟐</span>
@@ -221,15 +274,18 @@
                                 <p class="kse-placeholder-sub">Establishing connection to orbital network...</p>
                             </div>
                         </div>
+                        
                         <div id="subway-status" class="kse-status-badge nominal">STANDBY</div>
                     </div>
                 </div>
 
+                <!-- Mission Briefing -->
                 <div class="kse-panel">
                     <div class="kse-panel-header">
                         <span class="kse-panel-title">COMMAND BRIEFING</span>
                         <span class="kse-aurebesh-label">CMND</span>
                     </div>
+                    
                     <div class="kse-mission-content kse-brackets">
                         <div class="kse-mission-item">
                             <span class="kse-mission-label">PRIMARY OBJECTIVE</span>
@@ -243,14 +299,18 @@
                             <span class="kse-mission-label">AUTHORIZATION</span>
                             <span class="kse-mission-value">COMMAND CLEARANCE ACTIVE</span>
                         </div>
+                        
                         <div class="kse-divider"></div>
+                        
                         <p class="kse-mission-footer">May the Force guide your vigilance, Commander.</p>
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- KSE Command Footer -->
+        <!-- ════════════════════════════════════════════════════════════
+             KSE COMMAND FOOTER
+             ════════════════════════════════════════════════════════════ -->
         <footer class="kse-footer">
             <div class="kse-footer-left">
                 <span class="kse-footer-text">KSE TACTICAL OPERATIONS // ORBITAL COMMAND CENTER</span>
@@ -265,7 +325,9 @@
         </footer>
     </div>
 
-    <!-- Scripts -->
+    <!-- ════════════════════════════════════════════════════════════
+         SCRIPTS
+         ════════════════════════════════════════════════════════════ -->
     <script>
         // KSE Dashboard Configuration
         const DASHBOARD_CONFIG = {
