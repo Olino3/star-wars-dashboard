@@ -1,9 +1,9 @@
 /**
- * Galactic Command Dashboard - Main Application
+ * Kuat Systems Dashboard - Main Application
  * Handles data fetching and UI updates
  */
 
-class GalacticDashboard {
+class KuatSystemsDashboard {
     constructor() {
         // API base URL (change if deploying to different server)
         this.apiBaseUrl = window.location.origin;
@@ -20,7 +20,10 @@ class GalacticDashboard {
     }
 
     init() {
-        console.log('Initializing Galactic Command Dashboard...');
+        console.log('Initializing Kuat Systems Dashboard...');
+
+        // Set dashboard name from config
+        this.setDashboardName();
 
         // Initialize bounty tracker
         this.bountyTracker = new BountyTracker(this.apiBaseUrl);
@@ -38,6 +41,18 @@ class GalacticDashboard {
         setInterval(() => this.updateNews(), this.newsInterval);
 
         console.log('Dashboard initialized successfully');
+    }
+
+    setDashboardName() {
+        // Set dashboard name from configuration (if available)
+        if (typeof DASHBOARD_CONFIG !== 'undefined' && DASHBOARD_CONFIG.name) {
+            const nameElement = document.getElementById('dashboard-name');
+            if (nameElement) {
+                nameElement.textContent = DASHBOARD_CONFIG.name;
+            }
+            // Also update page title
+            document.title = DASHBOARD_CONFIG.name;
+        }
     }
 
     async updateChronometer() {
@@ -228,8 +243,8 @@ class GalacticDashboard {
 let dashboard;
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        dashboard = new GalacticDashboard();
+        dashboard = new KuatSystemsDashboard();
     });
 } else {
-    dashboard = new GalacticDashboard();
+    dashboard = new KuatSystemsDashboard();
 }

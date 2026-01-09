@@ -31,19 +31,19 @@ sudo reboot
 
 ```bash
 # Check service status
-sudo systemctl status galactic-dashboard.service
+sudo systemctl status kuat-systems-dashboard.service
 
 # Start service
-sudo systemctl start galactic-dashboard.service
+sudo systemctl start kuat-systems-dashboard.service
 
 # Stop service
-sudo systemctl stop galactic-dashboard.service
+sudo systemctl stop kuat-systems-dashboard.service
 
 # Restart service
-sudo systemctl restart galactic-dashboard.service
+sudo systemctl restart kuat-systems-dashboard.service
 
 # View logs
-sudo journalctl -u galactic-dashboard.service -f
+sudo journalctl -u kuat-systems-dashboard.service -f
 ```
 
 ### Kiosk Mode
@@ -137,7 +137,7 @@ python3 --version
 sudo lsof -i :5000
 
 # View detailed error logs
-sudo journalctl -u galactic-dashboard.service -n 50 --no-pager
+sudo journalctl -u kuat-systems-dashboard.service -n 50 --no-pager
 ```
 
 ### Weather not working
@@ -157,7 +157,7 @@ curl "http://api.openweathermap.org/data/2.5/weather?q=London&appid=YOUR_KEY&uni
 which chromium-browser
 
 # Check autostart file
-cat ~/.config/autostart/galactic-dashboard.desktop
+cat ~/.config/autostart/kuat-systems-dashboard.desktop
 
 # Test launch script manually
 bash -x ./config/launch-kiosk.sh
@@ -188,7 +188,7 @@ For better performance on Raspberry Pi 3 or older:
 ## Need Help?
 
 1. Check the main [README.md](README.md)
-2. Review error logs: `sudo journalctl -u galactic-dashboard.service -f`
+2. Review error logs: `sudo journalctl -u kuat-systems-dashboard.service -f`
 3. Test API endpoints individually (see above)
 4. Open an issue on GitHub
 

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Galactic Command Dashboard
+Name=Kuat Systems Dashboard
 Comment=Launch dashboard in kiosk mode
 Exec=/home/pi/star-wars-dashboard/config/launch-kiosk.sh
 Terminal=false

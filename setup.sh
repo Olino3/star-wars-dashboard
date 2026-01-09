@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # ============================================
-# Galactic Command Dashboard - Setup Script
+# Kuat Systems Dashboard - Setup Script
 # For Raspberry Pi with Debian/Raspberry Pi OS
 # ============================================
 
 set -e  # Exit on error
 
 echo "╔═══════════════════════════════════════════╗"
-echo "║  GALACTIC COMMAND DASHBOARD INSTALLER     ║"
+echo "║  KUAT SYSTEMS DASHBOARD INSTALLER         ║"
 echo "║  Configuring your Tactical Station...     ║"
 echo "╚═══════════════════════════════════════════╝"
 echo ""
@@ -57,9 +57,9 @@ INSTALL_DIR=$(pwd)
 
 # Create systemd service for auto-start
 echo "⚙️  Creating systemd service..."
-sudo tee /etc/systemd/system/galactic-dashboard.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/kuat-systems-dashboard.service > /dev/null <<EOF
 [Unit]
-Description=Galactic Command Dashboard Backend
+Description=Kuat Systems Dashboard Backend
 After=network.target
 
 [Service]
@@ -78,19 +78,19 @@ EOF
 # Enable and start the service
 echo "🚀 Enabling dashboard service..."
 sudo systemctl daemon-reload
-sudo systemctl enable galactic-dashboard.service
-sudo systemctl start galactic-dashboard.service
+sudo systemctl enable kuat-systems-dashboard.service
+sudo systemctl start kuat-systems-dashboard.service
 
 # Wait for service to start
 echo "⏳ Waiting for service to start..."
 sleep 3
 
 # Check service status
-if sudo systemctl is-active --quiet galactic-dashboard.service; then
+if sudo systemctl is-active --quiet kuat-systems-dashboard.service; then
     echo "✅ Dashboard service is running!"
 else
     echo "❌ Dashboard service failed to start. Check logs with:"
-    echo "   sudo journalctl -u galactic-dashboard.service -f"
+    echo "   sudo journalctl -u kuat-systems-dashboard.service -f"
 fi
 
 # Setup autostart directory
@@ -99,10 +99,10 @@ AUTOSTART_DIR="$HOME/.config/autostart"
 mkdir -p "$AUTOSTART_DIR"
 
 # Create autostart desktop entry
-cat > "$AUTOSTART_DIR/galactic-dashboard.desktop" <<EOF
+cat > "$AUTOSTART_DIR/kuat-systems-dashboard.desktop" <<EOF
 [Desktop Entry]
 Type=Application
-Name=Galactic Command Dashboard
+Name=Kuat Systems Dashboard
 Comment=Launch dashboard in kiosk mode
 Exec=$INSTALL_DIR/config/launch-kiosk.sh
 Terminal=false
@@ -168,9 +168,9 @@ WEATHER_LOCATION=$LOCATION
 EOF
 
     # Update systemd service to use .env file
-    sudo sed -i '/\[Service\]/a EnvironmentFile='$INSTALL_DIR'/.env' /etc/systemd/system/galactic-dashboard.service
+    sudo sed -i '/\[Service\]/a EnvironmentFile='$INSTALL_DIR'/.env' /etc/systemd/system/kuat-systems-dashboard.service
     sudo systemctl daemon-reload
-    sudo systemctl restart galactic-dashboard.service
+    sudo systemctl restart kuat-systems-dashboard.service
 
     echo "✅ Weather configuration saved!"
 else
@@ -183,7 +183,7 @@ echo "╔═══════════════════════�
 echo "║  INSTALLATION COMPLETE!                   ║"
 echo "╚═══════════════════════════════════════════╝"
 echo ""
-echo "🎉 Your Galactic Command Dashboard is ready!"
+echo "🎉 Your Kuat Systems Dashboard is ready!"
 echo ""
 echo "Next steps:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -194,11 +194,11 @@ echo "2. Enable kiosk mode on boot (optional):"
 echo "   The dashboard will auto-start in kiosk mode on next boot."
 echo ""
 echo "3. Manually start/stop the backend service:"
-echo "   sudo systemctl start galactic-dashboard.service"
-echo "   sudo systemctl stop galactic-dashboard.service"
+echo "   sudo systemctl start kuat-systems-dashboard.service"
+echo "   sudo systemctl stop kuat-systems-dashboard.service"
 echo ""
 echo "4. View backend logs:"
-echo "   sudo journalctl -u galactic-dashboard.service -f"
+echo "   sudo journalctl -u kuat-systems-dashboard.service -f"
 echo ""
 echo "5. To launch kiosk mode manually:"
 echo "   ./config/launch-kiosk.sh"

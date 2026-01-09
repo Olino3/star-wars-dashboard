@@ -1,4 +1,4 @@
-# 📊 Galactic Command Dashboard - Project Summary
+# 📊 Kuat Systems Dashboard - Project Summary
 
 ## Overview
 
@@ -85,7 +85,7 @@ star-wars-dashboard/
 - Integrates with OpenWeatherMap API
 - Falls back to mock data if no API key
 - Converts weather codes to "Imperial" status messages
-- Includes Galactic Standard Calendar conversion
+- Includes Kuat Systems Standard Calendar conversion
 
 **Frontend:** Visual display in right panel with:
 - Large temperature display
@@ -94,10 +94,10 @@ star-wars-dashboard/
 
 ### 3. Chronometer (Time Display)
 
-**Backend:** Provides both Earth time and "Galactic Standard" format
+**Backend:** Provides both Earth time and "Kuat Systems Standard" format
 **Frontend:** Updates every second in header
 - Format: GS YEAR:DAY:HOUR:MINUTE
-- Dual display (Galactic + Earth)
+- Dual display (Kuat Systems + Earth)
 
 ### 4. Bounty Hunter Tracking
 
@@ -106,7 +106,7 @@ star-wars-dashboard/
 - Interactive "SCAN" button
 - Scanning animation effect
 - Randomized target selection from database
-- Generates galactic coordinates
+- Generates Kuat systems coordinates
 - Displays threat levels and rewards
 
 ### 5. HoloNet News Feed
@@ -203,7 +203,7 @@ Frontend Updates DOM Elements
 
 ### Systemd Service
 
-- **Name:** `galactic-dashboard.service`
+- **Name:** `kuat-systems-dashboard.service`
 - **Type:** Simple (foreground process)
 - **Restart Policy:** Always (auto-recovery)
 - **User:** Non-root for security
@@ -220,7 +220,7 @@ Frontend Updates DOM Elements
 
 ```
 1. Raspberry Pi boots
-2. systemd starts galactic-dashboard.service
+2. systemd starts kuat-systems-dashboard.service
 3. Flask backend starts on port 5000
 4. LXDE desktop loads
 5. Autostart launches launch-kiosk.sh
