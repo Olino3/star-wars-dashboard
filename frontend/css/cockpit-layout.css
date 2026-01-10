@@ -20,48 +20,92 @@
 /* Hexagonal Cockpit Container */
 .cockpit-grid {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1.5rem;
     padding: 2rem;
+    flex: 1;
     overflow: hidden;
-    max-width: 1920px;
+    max-width: 1800px;
     margin: 0 auto;
+    min-height: 0;
 }
 
 /* ============================================
-   HEXAGON GEOMETRY CALCULATIONS
-   Center: 400px width hexagon
-   Surrounding: Pentagon/Trapezoid panels
+   GRID POSITIONING
    ============================================ */
 
-/* All panels positioned absolutely */
+/* All panels */
 .hex-panel {
-    position: absolute;
+    position: relative;
     display: flex;
     flex-direction: column;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 250px;
+}
+
+/* Top Row */
+.hex-top-left {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.hex-top-center-left {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.hex-top-center-right {
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+}
+
+.hex-top-right {
+    grid-column: 4 / 5;
+    grid-row: 1 / 2;
+}
+
+/* Center spans both rows, middle columns */
+.hex-center-main {
+    grid-column: 2 / 4;
+    grid-row: 1 / 3;
+    z-index: 10;
+    min-height: 500px;
+}
+
+/* Bottom Row */
+.hex-bottom-left {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+.hex-bottom-center {
+    grid-column: 2 / 4;
+    grid-row: 2 / 3;
+    z-index: 5;
+}
+
+.hex-bottom-right {
+    grid-column: 4 / 5;
+    grid-row: 2 / 3;
 }
 
 /* ============================================
-   CENTER HEXAGON - Main Video Panel
+   HEXAGON & TRAPEZOID SHAPES
    ============================================ */
+
+/* Center Hexagon */
 .hex-center-main {
-    width: 500px;
-    height: 580px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     clip-path: polygon(
         30% 0%,
         70% 0%,
-        100% 50%,
+        100% 25%,
+        100% 75%,
         70% 100%,
         30% 100%,
-        0% 50%
+        0% 75%,
+        0% 25%
     );
-    z-index: 10;
 }
 
 .hex-center-main .panel {
@@ -69,26 +113,20 @@
     clip-path: polygon(
         30% 0%,
         70% 0%,
-        100% 50%,
+        100% 25%,
+        100% 75%,
         70% 100%,
         30% 100%,
-        0% 50%
+        0% 75%,
+        0% 25%
     );
 }
 
-/* ============================================
-   TOP ROW PANELS - Trapezoids
-   ============================================ */
-
-/* Top Left - Reactor Core */
+/* Top Trapezoids - taper toward center */
 .hex-top-left {
-    width: 280px;
-    height: 240px;
-    left: 15%;
-    top: 12%;
     clip-path: polygon(
-        20% 0%,
-        80% 0%,
+        15% 0%,
+        85% 0%,
         100% 100%,
         0% 100%
     );
@@ -97,22 +135,17 @@
 .hex-top-left .panel {
     height: 100%;
     clip-path: polygon(
-        20% 0%,
-        80% 0%,
+        15% 0%,
+        85% 0%,
         100% 100%,
         0% 100%
     );
 }
 
-/* Top Center Left - Memory Banks */
 .hex-top-center-left {
-    width: 280px;
-    height: 240px;
-    left: 32%;
-    top: 8%;
     clip-path: polygon(
-        10% 0%,
-        90% 0%,
+        5% 0%,
+        95% 0%,
         100% 100%,
         0% 100%
     );
@@ -121,22 +154,17 @@
 .hex-top-center-left .panel {
     height: 100%;
     clip-path: polygon(
-        10% 0%,
-        90% 0%,
+        5% 0%,
+        95% 0%,
         100% 100%,
         0% 100%
     );
 }
 
-/* Top Center Right - News Feed */
 .hex-top-center-right {
-    width: 280px;
-    height: 240px;
-    right: 32%;
-    top: 8%;
     clip-path: polygon(
-        10% 0%,
-        90% 0%,
+        5% 0%,
+        95% 0%,
         100% 100%,
         0% 100%
     );
@@ -145,22 +173,17 @@
 .hex-top-center-right .panel {
     height: 100%;
     clip-path: polygon(
-        10% 0%,
-        90% 0%,
+        5% 0%,
+        95% 0%,
         100% 100%,
         0% 100%
     );
 }
 
-/* Top Right - Storage Systems */
 .hex-top-right {
-    width: 280px;
-    height: 240px;
-    right: 15%;
-    top: 12%;
     clip-path: polygon(
-        20% 0%,
-        80% 0%,
+        15% 0%,
+        85% 0%,
         100% 100%,
         0% 100%
     );
@@ -169,28 +192,20 @@
 .hex-top-right .panel {
     height: 100%;
     clip-path: polygon(
-        20% 0%,
-        80% 0%,
+        15% 0%,
+        85% 0%,
         100% 100%,
         0% 100%
     );
 }
 
-/* ============================================
-   BOTTOM ROW PANELS - Inverted Trapezoids
-   ============================================ */
-
-/* Bottom Left - Mission Briefing */
+/* Bottom Trapezoids - expand from center */
 .hex-bottom-left {
-    width: 340px;
-    height: 240px;
-    left: 12%;
-    bottom: 12%;
     clip-path: polygon(
         0% 0%,
         100% 0%,
-        80% 100%,
-        20% 100%
+        85% 100%,
+        15% 100%
     );
 }
 
@@ -199,23 +214,17 @@
     clip-path: polygon(
         0% 0%,
         100% 0%,
-        80% 100%,
-        20% 100%
+        85% 100%,
+        15% 100%
     );
 }
 
-/* Bottom Center - Weather Panel */
 .hex-bottom-center {
-    width: 340px;
-    height: 240px;
-    left: 50%;
-    bottom: 8%;
-    transform: translateX(-50%);
     clip-path: polygon(
         0% 0%,
         100% 0%,
-        90% 100%,
-        10% 100%
+        95% 100%,
+        5% 100%
     );
 }
 
@@ -224,22 +233,17 @@
     clip-path: polygon(
         0% 0%,
         100% 0%,
-        90% 100%,
-        10% 100%
+        95% 100%,
+        5% 100%
     );
 }
 
-/* Bottom Right - Transit Panel */
 .hex-bottom-right {
-    width: 340px;
-    height: 240px;
-    right: 12%;
-    bottom: 12%;
     clip-path: polygon(
         0% 0%,
         100% 0%,
-        80% 100%,
-        20% 100%
+        85% 100%,
+        15% 100%
     );
 }
 
@@ -248,8 +252,8 @@
     clip-path: polygon(
         0% 0%,
         100% 0%,
-        80% 100%,
-        20% 100%
+        85% 100%,
+        15% 100%
     );
 }
 
@@ -347,7 +351,7 @@
         0 12px 48px 0 rgba(0, 150, 255, 0.4),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
         0 0 60px rgba(150, 220, 255, 0.25) !important;
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
 /* ============================================
@@ -363,13 +367,14 @@
         0 0 80px rgba(100, 200, 255, 0.4) !important;
 }
 
-.main-video-panel:hover {
-    transform: scale(1.01);
-}
-
 /* Scrollable content areas */
 .news-feed,
-.subway-lines,
+.subway-lines {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
+}
+
 .weather-content {
     overflow-y: auto;
     overflow-x: hidden;
@@ -413,55 +418,23 @@
    ============================================ */
 
 @media (max-width: 1600px) {
-    .hex-center-main {
-        width: 450px;
-        height: 520px;
+    .cockpit-grid {
+        gap: 1rem;
+        padding: 1.5rem;
     }
-
-    .hex-top-left,
-    .hex-top-center-left,
-    .hex-top-center-right,
-    .hex-top-right {
-        width: 250px;
-        height: 220px;
-    }
-
-    .hex-bottom-left,
-    .hex-bottom-center,
-    .hex-bottom-right {
-        width: 300px;
-        height: 220px;
-    }
-
-    .hex-top-left { left: 12%; top: 10%; }
-    .hex-top-center-left { left: 30%; top: 6%; }
-    .hex-top-center-right { right: 30%; top: 6%; }
-    .hex-top-right { right: 12%; top: 10%; }
-    .hex-bottom-left { left: 10%; bottom: 10%; }
-    .hex-bottom-center { bottom: 6%; }
-    .hex-bottom-right { right: 10%; bottom: 10%; }
 }
 
 @media (max-width: 1366px) {
     .cockpit-grid {
-        flex-direction: column;
-        overflow-y: auto;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+        gap: 1rem;
         padding: 1rem;
     }
 
     .hex-panel {
-        position: relative !important;
-        width: 100% !important;
-        max-width: 600px;
-        height: auto !important;
-        min-height: 300px;
-        left: auto !important;
-        right: auto !important;
-        top: auto !important;
-        bottom: auto !important;
-        transform: none !important;
-        margin: 0.5rem auto;
         clip-path: none !important;
+        min-height: 300px;
     }
 
     .hex-panel .panel {
@@ -469,24 +442,57 @@
         border-radius: 30px !important;
     }
 
-    /* Reorder for mobile */
-    .hex-center-main { order: 1; min-height: 500px; }
-    .hex-top-left { order: 2; }
-    .hex-top-center-left { order: 3; }
-    .hex-top-center-right { order: 4; }
-    .hex-top-right { order: 5; }
-    .hex-bottom-left { order: 6; }
-    .hex-bottom-center { order: 7; }
-    .hex-bottom-right { order: 8; }
+    .hex-top-left {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+
+    .hex-top-center-left {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+
+    .hex-center-main {
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+    }
+
+    .hex-top-center-right {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+    }
+
+    .hex-top-right {
+        grid-column: 2 / 3;
+        grid-row: 3 / 4;
+    }
+
+    .hex-bottom-left {
+        grid-column: 1 / 2;
+        grid-row: 4 / 5;
+    }
+
+    .hex-bottom-center {
+        grid-column: 2 / 3;
+        grid-row: 4 / 5;
+    }
+
+    .hex-bottom-right {
+        grid-column: 1 / 3;
+        grid-row: 5 / 6;
+    }
 }
 
 @media (max-width: 768px) {
     .cockpit-grid {
-        padding: 0.5rem;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 0.75rem;
     }
 
     .hex-panel {
-        max-width: 100%;
+        grid-column: 1 !important;
+        grid-row: auto !important;
         min-height: 250px;
     }
 
@@ -526,26 +532,13 @@
    PANEL CONTENT ADJUSTMENTS
    ============================================ */
 
-/* Video container fills hexagon */
+/* Video container fills space */
 .youtube-video-container {
-    height: calc(100% - 80px) !important;
-    min-height: 400px !important;
+    flex: 1;
+    min-height: 350px;
 }
 
-/* Adjust scrollable areas */
-.news-feed {
-    max-height: calc(100% - 60px);
-}
-
-.subway-lines {
-    max-height: calc(100% - 100px);
-}
-
-.weather-content {
-    max-height: calc(100% - 60px);
-}
-
-/* Fix for small panels */
+/* Adjust font sizes for smaller panels */
 .hex-top-left .panel,
 .hex-top-center-left .panel,
 .hex-top-center-right .panel,
@@ -558,4 +551,12 @@
 .hex-top-center-right .panel-title,
 .hex-top-right .panel-title {
     font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.hex-top-left .diagnostic-item,
+.hex-top-center-left .diagnostic-item,
+.hex-top-center-right .diagnostic-item,
+.hex-top-right .diagnostic-item {
+    margin-bottom: 0.75rem;
 }
