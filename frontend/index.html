@@ -6,8 +6,29 @@
     <title>Kuat Systems Engineering</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/starfield.css">
+    <link rel="stylesheet" href="css/cockpit-layout.css">
 </head>
 <body>
+    <!-- Starfield Background -->
+    <div class="starfield">
+        <div class="nebula-layer"></div>
+        <div class="stars-layer-1"></div>
+        <div class="stars-layer-2"></div>
+        <div class="stars-layer-3"></div>
+        <div class="stars-twinkle"></div>
+        <div class="hyperspace-streaks">
+            <div class="streak"></div>
+            <div class="streak"></div>
+            <div class="streak"></div>
+            <div class="streak"></div>
+            <div class="streak"></div>
+            <div class="streak"></div>
+            <div class="streak"></div>
+            <div class="streak"></div>
+        </div>
+    </div>
+
     <!-- Main Dashboard -->
     <div id="dashboard" class="dashboard" style="display: flex;">
         <!-- Scanline Overlay Effect -->
@@ -37,10 +58,10 @@
             </div>
         </header>
 
-        <!-- Main Content Grid (Optimized for Curved/Ultra-wide) -->
-        <main class="main-grid">
-            <!-- Left Column: System Diagnostics -->
-            <section class="left-panel">
+        <!-- Main Content Grid (Hexagonal Cockpit Layout) -->
+        <main class="cockpit-grid">
+            <!-- Top Row Panels -->
+            <section class="hex-panel hex-top-left">
                 <div class="panel system-panel">
                     <h2 class="panel-title">⚡ REACTOR CORE STATUS</h2>
                     <div class="diagnostic-item">
@@ -56,7 +77,9 @@
                     </div>
                     <div id="reactor-status" class="status-badge optimal">OPTIMAL</div>
                 </div>
+            </section>
 
+            <section class="hex-panel hex-top-center-left">
                 <div class="panel system-panel">
                     <h2 class="panel-title">💾 MEMORY BANKS</h2>
                     <div class="diagnostic-item">
@@ -72,52 +95,11 @@
                     </div>
                     <div id="memory-status" class="status-badge nominal">NOMINAL</div>
                 </div>
-
-                <div class="panel system-panel">
-                    <h2 class="panel-title">💿 STORAGE SYSTEMS</h2>
-                    <div class="diagnostic-item">
-                        <div class="diag-label">Capacity</div>
-                        <div class="diag-bar">
-                            <div id="storage-capacity-bar" class="diag-bar-fill" style="width: 60%"></div>
-                        </div>
-                        <div id="storage-capacity" class="diag-value">60%</div>
-                    </div>
-                    <div class="diagnostic-item">
-                        <div class="diag-label">Available</div>
-                        <div id="storage-usage" class="diag-value">12.5 / 32.0 GB</div>
-                    </div>
-                    <div id="storage-status" class="status-badge nominal">NOMINAL</div>
-                </div>
-
-                <div class="panel info-panel">
-                    <h2 class="panel-title">ℹ️ MISSION BRIEFING</h2>
-                    <div class="mission-text">
-                        <p><strong>Objective:</strong> Monitor all systems across Kuat Systems Engineering.</p>
-                        <p><strong>Priority:</strong> Maintain operational readiness at all times.</p>
-                        <p><strong>Commander:</strong> You are in command of this tactical station.</p>
-                        <hr class="divider">
-                        <p class="small">May the Force be with you, Commander.</p>
-                    </div>
-                </div>
             </section>
 
-            <!-- Center Column: News Feed & Video -->
-            <section class="center-panel">
-                <div class="panel news-panel">
-                    <h2 class="panel-title">📡 HOLONET NEWS FEED</h2>
-                    <div id="news-feed" class="news-feed">
-                        <!-- News items will be injected here -->
-                        <div class="news-item">
-                            <div class="news-title">Loading HoloNet transmission...</div>
-                            <div class="news-meta">
-                                <span class="news-source">Kuat Systems</span>
-                                <span class="news-time">Now</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel youtube-panel">
+            <!-- Center Video Panel (Main Feature) -->
+            <section class="hex-panel hex-center-main">
+                <div class="panel youtube-panel main-video-panel">
                     <h2 class="panel-title">🎬 HOLONET TRANSMISSIONS</h2>
                     <div class="youtube-controls">
                         <button type="button" class="category-button active" data-category="scenery" aria-label="Select scenery videos">SCENERY</button>
@@ -134,8 +116,55 @@
                 </div>
             </section>
 
-            <!-- Right Column: Weather/Atmospheric Data -->
-            <section class="right-panel">
+            <section class="hex-panel hex-top-center-right">
+                <div class="panel news-panel">
+                    <h2 class="panel-title">📡 HOLONET NEWS FEED</h2>
+                    <div id="news-feed" class="news-feed">
+                        <!-- News items will be injected here -->
+                        <div class="news-item">
+                            <div class="news-title">Loading HoloNet transmission...</div>
+                            <div class="news-meta">
+                                <span class="news-source">Kuat Systems</span>
+                                <span class="news-time">Now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hex-panel hex-top-right">
+                <div class="panel system-panel">
+                    <h2 class="panel-title">💿 STORAGE SYSTEMS</h2>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Capacity</div>
+                        <div class="diag-bar">
+                            <div id="storage-capacity-bar" class="diag-bar-fill" style="width: 60%"></div>
+                        </div>
+                        <div id="storage-capacity" class="diag-value">60%</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diag-label">Available</div>
+                        <div id="storage-usage" class="diag-value">12.5 / 32.0 GB</div>
+                    </div>
+                    <div id="storage-status" class="status-badge nominal">NOMINAL</div>
+                </div>
+            </section>
+
+            <!-- Bottom Row Panels -->
+            <section class="hex-panel hex-bottom-left">
+                <div class="panel info-panel">
+                    <h2 class="panel-title">ℹ️ MISSION BRIEFING</h2>
+                    <div class="mission-text">
+                        <p><strong>Objective:</strong> Monitor all systems across Kuat Systems Engineering.</p>
+                        <p><strong>Priority:</strong> Maintain operational readiness at all times.</p>
+                        <p><strong>Commander:</strong> You are in command of this tactical station.</p>
+                        <hr class="divider">
+                        <p class="small">May the Force be with you, Commander.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hex-panel hex-bottom-center">
                 <div class="panel weather-panel">
                     <h2 class="panel-title">🌍 ATMOSPHERIC DATA</h2>
                     <div class="weather-content">
@@ -222,7 +251,9 @@
                         </div>
                     </div>
                 </div>
+            </section>
 
+            <section class="hex-panel hex-bottom-right">
                 <div class="panel subway-panel">
                     <h2 class="panel-title">🚇 TRANSPORT NETWORK STATUS</h2>
                     <div id="subway-station" class="subway-station">Awaiting Transit Data...</div>

@@ -1,0 +1,360 @@
+/* ============================================
+   HEXAGONAL COCKPIT LAYOUT
+   Mon Calamari Inspired Liquid Glass Design
+   ============================================ */
+
+/* Updated CSS Variables for Glass Effect */
+:root {
+    --glass-bg: rgba(15, 25, 35, 0.25);
+    --glass-border: rgba(100, 200, 255, 0.2);
+    --glass-highlight: rgba(200, 240, 255, 0.1);
+    --glass-shadow: rgba(0, 100, 200, 0.3);
+}
+
+/* Override dashboard background to be transparent */
+.dashboard {
+    background: transparent !important;
+}
+
+/* Hexagonal Cockpit Grid Layout */
+.cockpit-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 2rem;
+    flex: 1;
+    overflow: hidden;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+/* Grid Positioning for Hexagonal Pattern */
+.hex-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Row - 5 panels across */
+.hex-top-left {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.hex-top-center-left {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.hex-center-main {
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+    /* Center video panel spans both rows */
+    grid-row: 1 / 3;
+}
+
+.hex-top-center-right {
+    grid-column: 4 / 5;
+    grid-row: 1 / 2;
+}
+
+.hex-top-right {
+    grid-column: 5 / 6;
+    grid-row: 1 / 2;
+}
+
+/* Bottom Row - 3 panels (with center occupied by video) */
+.hex-bottom-left {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+}
+
+.hex-bottom-center {
+    grid-column: 4 / 5;
+    grid-row: 2 / 3;
+}
+
+.hex-bottom-right {
+    grid-column: 5 / 6;
+    grid-row: 2 / 3;
+}
+
+/* ============================================
+   LIQUID GLASS PANEL STYLING
+   Mon Calamari Organic Curves
+   ============================================ */
+
+/* Enhanced Glass Effect for All Panels */
+.panel {
+    background: var(--glass-bg) !important;
+    border: 2px solid var(--glass-border) !important;
+    border-radius: 30px !important;
+    padding: var(--spacing-lg);
+    box-shadow:
+        0 8px 32px 0 var(--glass-shadow),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+        0 0 40px rgba(100, 200, 255, 0.15) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glass shimmer effect */
+.panel::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.03) 50%,
+        transparent 70%
+    );
+    transform: rotate(45deg);
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: rotate(45deg) translateX(-100%); }
+    50% { transform: rotate(45deg) translateX(100%); }
+}
+
+/* Curved border highlight (Mon Calamari organic feel) */
+.panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 30px;
+    padding: 2px;
+    background: linear-gradient(
+        135deg,
+        rgba(100, 200, 255, 0.3) 0%,
+        rgba(50, 150, 255, 0.1) 25%,
+        transparent 50%,
+        rgba(100, 200, 255, 0.1) 75%,
+        rgba(150, 220, 255, 0.3) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    animation: border-flow 6s linear infinite;
+}
+
+@keyframes border-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Hover effect - increase glass clarity */
+.panel:hover {
+    background: rgba(15, 25, 35, 0.35) !important;
+    border-color: rgba(150, 220, 255, 0.4) !important;
+    box-shadow:
+        0 12px 48px 0 rgba(0, 150, 255, 0.4),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+        0 0 60px rgba(150, 220, 255, 0.25) !important;
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   MON CALAMARI ORGANIC SHAPING
+   Asymmetric, flowing curves
+   ============================================ */
+
+/* Main video panel - largest, most prominent */
+.main-video-panel {
+    border-radius: 40px !important;
+    background: var(--glass-bg) !important;
+    box-shadow:
+        0 12px 48px 0 rgba(0, 150, 255, 0.5),
+        inset 0 2px 0 0 rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(100, 200, 255, 0.3) !important;
+}
+
+/* System panels - varied organic shapes */
+.system-panel {
+    border-radius: 35px 25px 35px 25px !important;
+    clip-path: polygon(
+        5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%
+    );
+}
+
+/* News panel - flowing water droplet shape */
+.news-panel {
+    border-radius: 40px 30px 35px 25px !important;
+}
+
+/* Weather panel - cloud-like curves */
+.weather-panel {
+    border-radius: 45px 35px 40px 30px !important;
+    background: linear-gradient(
+        135deg,
+        rgba(15, 35, 55, 0.3) 0%,
+        rgba(15, 25, 35, 0.25) 100%
+    ) !important;
+}
+
+/* Info/Mission panel - organic flowing shape */
+.info-panel {
+    border-radius: 30px 40px 30px 40px !important;
+    clip-path: polygon(
+        3% 0%, 97% 0%, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0% 97%, 0% 3%
+    );
+}
+
+/* Transit panel - streamlined shape */
+.subway-panel {
+    border-radius: 35px 40px 35px 40px !important;
+}
+
+/* ============================================
+   ENHANCED TRANSPARENCY EFFECTS
+   ============================================ */
+
+/* Make header more transparent */
+.header {
+    background: linear-gradient(
+        180deg,
+        rgba(10, 20, 30, 0.6) 0%,
+        rgba(10, 20, 30, 0.4) 100%
+    ) !important;
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border-bottom: 2px solid rgba(100, 200, 255, 0.3) !important;
+    box-shadow: 0 0 30px rgba(0, 150, 255, 0.3) !important;
+}
+
+/* Make footer more transparent */
+.footer {
+    background: rgba(10, 20, 30, 0.5) !important;
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border-top: 1px solid rgba(100, 200, 255, 0.2) !important;
+}
+
+/* Enhanced panel titles with glow */
+.panel-title {
+    text-shadow:
+        0 0 15px var(--imperial-blue-glow),
+        0 0 30px rgba(100, 200, 255, 0.3) !important;
+    border-bottom: 1px solid rgba(100, 200, 255, 0.3) !important;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 1600px) {
+    .cockpit-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+
+    .hex-top-left {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+
+    .hex-top-center-left {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+
+    .hex-center-main {
+        grid-column: 3 / 4;
+        grid-row: 1 / 3;
+    }
+
+    .hex-top-center-right {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+    }
+
+    .hex-top-right {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+    }
+
+    .hex-bottom-left {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+    }
+
+    .hex-bottom-center {
+        grid-column: 2 / 3;
+        grid-row: 3 / 4;
+    }
+
+    .hex-bottom-right {
+        grid-column: 3 / 4;
+        grid-row: 3 / 4;
+    }
+}
+
+@media (max-width: 1200px) {
+    .cockpit-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+    }
+
+    .hex-panel {
+        grid-column: auto !important;
+        grid-row: auto !important;
+    }
+
+    .hex-center-main {
+        grid-column: 1 / 3 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .cockpit-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .hex-panel {
+        grid-column: 1 !important;
+        grid-row: auto !important;
+    }
+}
+
+/* ============================================
+   ANIMATED GLASS REFRACTION
+   ============================================ */
+
+/* Subtle refraction effect on glass panels */
+@keyframes glass-refract {
+    0%, 100% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+    50% {
+        filter: hue-rotate(5deg) brightness(1.05);
+    }
+}
+
+.panel {
+    animation: glass-refract 10s ease-in-out infinite;
+}
+
+/* Reduce CRT effects opacity for better starfield visibility */
+.scanline-overlay {
+    opacity: 0.3 !important;
+}
+
+.crt-flicker {
+    opacity: 0.1 !important;
+}
