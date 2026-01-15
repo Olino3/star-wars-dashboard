@@ -186,14 +186,14 @@ html, body {
 }
 
 .chronometer-label {
-    font-size: 0.7rem;
+    font-size: 1.4rem;
     color: var(--text-dim);
     letter-spacing: 0.1em;
     margin-bottom: var(--spacing-xs);
 }
 
 .galactic-time {
-    font-size: 1.5rem;
+    font-size: 4rem;
     font-weight: bold;
     color: var(--imperial-blue);
     text-shadow: 0 0 15px var(--imperial-blue-glow);
@@ -202,7 +202,7 @@ html, body {
 }
 
 .earth-time {
-    font-size: 0.9rem;
+    font-size: 2rem;
     color: var(--text-secondary);
     margin-top: var(--spacing-xs);
 }
