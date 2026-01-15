@@ -1039,21 +1039,103 @@ html, body {
 }
 
 /* ============================================
-   MISSION BRIEFING
+   FOOD MAP WIDGET
    ============================================ */
-.mission-text {
-    line-height: 1.6;
+.food-map-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.food-map-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-xs) 0;
+}
+
+.food-map-location {
+    font-size: 0.9rem;
+    color: var(--imperial-green);
+    text-shadow: 0 0 5px var(--imperial-green-glow);
+}
+
+.food-map-count {
+    font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
-.mission-text p {
+.food-map-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: var(--imperial-dark-gray);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    overflow: hidden;
     margin-bottom: var(--spacing-sm);
 }
 
-.mission-text strong {
-    color: var(--text-primary);
+.food-map-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: var(--spacing-md);
 }
 
+.food-map-placeholder p {
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Leaflet map overrides for dark theme */
+#food-map {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.leaflet-container {
+    background: var(--imperial-dark-gray) !important;
+    font-family: 'Courier New', 'Consolas', monospace !important;
+}
+
+.leaflet-popup-content-wrapper {
+    background: rgba(20, 20, 20, 0.95) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--panel-border) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3) !important;
+}
+
+.leaflet-popup-tip {
+    background: rgba(20, 20, 20, 0.95) !important;
+    border: 1px solid var(--panel-border) !important;
+}
+
+.food-popup {
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.food-popup strong {
+    color: var(--imperial-blue);
+    text-shadow: 0 0 3px var(--imperial-blue-glow);
+}
+
+/* Custom marker styles */
+.center-marker,
+.food-marker {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Utility classes */
 .divider {
     border: none;
     border-top: 1px solid var(--panel-border);

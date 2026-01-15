@@ -17,6 +17,7 @@ class KuatSystemsDashboard {
 
         // Initialize components
         this.youtubeFeed = null;
+        this.foodMap = null;
         this.init();
     }
 
@@ -28,6 +29,9 @@ class KuatSystemsDashboard {
 
         // Initialize YouTube feed
         this.youtubeFeed = new YouTubeFeed();
+
+        // Initialize Food Map
+        this.foodMap = new FoodMap();
 
         // Initial data fetch
         this.updateChronometer();

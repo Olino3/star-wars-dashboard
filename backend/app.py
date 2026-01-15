@@ -12,6 +12,7 @@ from utils.weather import get_weather_data, get_galactic_date
 from utils.subway import get_subway_data
 from utils.youtini import get_youtini_articles
 from utils.youtube import get_youtube_videos, get_all_categories
+from utils.food_map import get_nearby_food_places, get_user_location_from_ip
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
@@ -122,6 +123,58 @@ def api_youtube_categories():
     try:
         categories = get_all_categories()
         return jsonify({"success": True, "data": categories})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/food-map')
+def api_food_map():
+    """
+    Get nearby food establishments
+
+    Query parameters (optional):
+        lat: Latitude
+        lon: Longitude
+        radius: Search radius in meters (default: 1000)
+
+    If no coordinates provided, attempts to detect from IP
+    """
+    try:
+        from flask import request
+
+        # Get coordinates from query parameters or detect from IP
+        lat = request.args.get('lat', type=float)
+        lon = request.args.get('lon', type=float)
+        radius = request.args.get('radius', type=int, default=1000)
+
+        # If no coordinates provided, try to detect location from IP
+        if lat is None or lon is None:
+            location = get_user_location_from_ip()
+            if location:
+                lat = location['latitude']
+                lon = location['longitude']
+                city = location.get('city', 'Unknown')
+            else:
+                # Fallback to default location (London)
+                lat = 51.5074
+                lon = -0.1278
+                city = 'London'
+        else:
+            city = 'Custom Location'
+
+        # Fetch nearby food places
+        food_places = get_nearby_food_places(lat, lon, radius)
+
+        return jsonify({
+            "success": True,
+            "data": {
+                "center": {"latitude": lat, "longitude": lon},
+                "city": city,
+                "radius": radius,
+                "places": food_places,
+                "count": len(food_places)
+            }
+        })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
