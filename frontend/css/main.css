@@ -186,14 +186,14 @@ html, body {
 }
 
 .chronometer-label {
-    font-size: 0.7rem;
+    font-size: 1.4rem;
     color: var(--text-dim);
     letter-spacing: 0.1em;
     margin-bottom: var(--spacing-xs);
 }
 
 .galactic-time {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     font-weight: bold;
     color: var(--imperial-blue);
     text-shadow: 0 0 15px var(--imperial-blue-glow);
@@ -202,7 +202,7 @@ html, body {
 }
 
 .earth-time {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
     margin-top: var(--spacing-xs);
 }
@@ -1195,6 +1195,14 @@ html, body {
     .main-grid {
         grid-template-columns: minmax(250px, 1fr) minmax(500px, 2fr) minmax(250px, 1fr);
     }
+
+    .galactic-time {
+        font-size: 2.2rem;
+    }
+
+    .earth-time {
+        font-size: 1.1rem;
+    }
 }
 
 @media (max-width: 1366px) {
@@ -1207,5 +1215,13 @@ html, body {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: var(--spacing-md);
+    }
+
+    .galactic-time {
+        font-size: 1.8rem;
+    }
+
+    .earth-time {
+        font-size: 0.95rem;
     }
 }
