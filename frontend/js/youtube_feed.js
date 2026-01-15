@@ -1,147 +1,304 @@
 /**
  * YouTube Video Feed Module
- * Displays Star Wars YouTube videos with toggle between different content types
+ * Displays Star Wars scenery videos continuously
  * Fetches video IDs from secure Flask backend proxy
+ * Refetches from backend when all videos have been played or on error
+ * No fallback videos - always attempts to refresh from backend
  */
-
-// Video rotation interval: 5 minutes (in milliseconds)
-const VIDEO_ROTATION_INTERVAL_MS = 300000;
 
 class YouTubeFeed {
     constructor() {
         this.videoContainer = document.getElementById('youtube-video-container');
-        this.currentCategory = 'scenery';
         this.currentVideoIndex = 0;
-        this.rotationTimer = null;
         this.apiBaseUrl = window.location.origin;
-        
-        // Local cache for video IDs fetched from backend
-        this.videoCache = {};
-        
+        this.player = null;
+        this.playerReady = false;
+
+        // Track video IDs and playback
+        this.videoIds = [];
+        this.playedVideos = new Set();
+
         // Fallback video IDs in case API fails
-        // Verified working embeddable Star Wars videos
-        this.fallbackVideos = {
-            scenery: ['1k59gXTWf-A', 'fCUlgFKGF0c', 'SjC5bezSaWU'],
-            battles: ['ns_PrdukHuM', '8Qn_spdM5Zg', 'r5h2dLMqbJA'],
-            music: ['_D0ZQPqeJkk', '1gpXMGit4P8', 'W1937VEYguI'],
-            lore: ['wEBiPGmTphY', 'XD9WWqdfzRs', 'BSqJBWvbFgY']
-        };
-        
+        // Verified working embeddable Star Wars scenery videos
+        this.fallbackVideos = ['1k59gXTWf-A', 'fCUlgFKGF0c', 'SjC5bezSaWU'];
+
+        // Track error recovery timeout to prevent multiple queued recoveries
+        this.recoveryTimeout = null;
+
         this.init();
     }
 
     init() {
-        this.setupCategoryButtons();
-        this.loadVideo();
-        this.startVideoRotation();
+        // Load YouTube IFrame API
+        this.loadYouTubeAPI();
     }
 
-    setupCategoryButtons() {
-        const buttons = document.querySelectorAll('.category-button');
-        buttons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                // Remove active class from all buttons
-                buttons.forEach(btn => btn.classList.remove('active'));
-                // Add active class to clicked button
-                e.target.classList.add('active');
-                // Update category and load new video
-                this.currentCategory = e.target.dataset.category;
-                this.currentVideoIndex = 0;
-                this.loadVideo();
-                // Restart video rotation timer
-                this.startVideoRotation();
-            });
-        });
+    loadYouTubeAPI() {
+        /**
+         * Load YouTube IFrame API script
+         */
+        // Ensure a shared callback queue exists
+        if (!window._ytApiReadyCallbacks) {
+            window._ytApiReadyCallbacks = [];
+        }
+
+        const instanceCallback = () => {
+            this.onAPIReady();
+        };
+
+        // If the API is already fully ready, call immediately
+        if (window.YT && window.YT.Player) {
+            instanceCallback();
+            return;
+        }
+
+        // Otherwise, enqueue this instance's callback to be called when the API is ready
+        window._ytApiReadyCallbacks.push(instanceCallback);
+
+        // If the script tag is already present, assume it is loading and just rely on the global callback
+        const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+
+        if (!existingScript) {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // Set up (or extend) the global callback for when the API is ready
+        if (!window.onYouTubeIframeAPIReady) {
+            window.onYouTubeIframeAPIReady = () => {
+                const callbacks = window._ytApiReadyCallbacks || [];
+                while (callbacks.length) {
+                    const cb = callbacks.shift();
+                    try {
+                        cb();
+                    } catch (e) {
+                        console.error('Error in YouTube IFrame API ready callback:', e);
+                    }
+                }
+            };
+        } else {
+            const previousCallback = window.onYouTubeIframeAPIReady;
+            window.onYouTubeIframeAPIReady = () => {
+                try {
+                    previousCallback();
+                } finally {
+                    const callbacks = window._ytApiReadyCallbacks || [];
+                    while (callbacks.length) {
+                        const cb = callbacks.shift();
+                        try {
+                            cb();
+                        } catch (e) {
+                            console.error('Error in YouTube IFrame API ready callback:', e);
+                        }
+                    }
+                }
+            };
+        }
     }
 
-    async fetchVideoIds(category) {
+    async onAPIReady() {
+        /**
+         * Called when YouTube IFrame API is ready
+         */
+        console.log('YouTube IFrame API ready');
+        await this.loadVideoList();
+    }
+
+    async fetchVideoIds() {
         /**
          * Fetch video IDs from the Flask backend proxy
          * Backend handles YouTube API calls securely with caching
          */
         try {
-            const response = await fetch(`${this.apiBaseUrl}/api/youtube/${category}`);
-            
+            const response = await fetch(`${this.apiBaseUrl}/api/youtube/scenery`);
+
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`);
             }
-            
+
             const data = await response.json();
-            
+
             if (data.success && data.data && data.data.length > 0) {
-                // Cache the video IDs locally
-                this.videoCache[category] = data.data;
-                console.log(`Loaded ${data.data.length} videos for ${category} (source: ${data.source})`);
+                console.log(`Loaded ${data.data.length} scenery videos (source: ${data.source})`);
                 return data.data;
             } else {
                 throw new Error(data.error || 'No videos returned');
             }
         } catch (error) {
-            console.error(`Failed to fetch videos for ${category}:`, error);
+            console.error('Failed to fetch scenery videos:', error);
             return null;
         }
     }
 
-    async getVideoIds(category) {
+    async loadVideoList() {
         /**
-         * Get video IDs for category - uses local cache if available,
-         * otherwise fetches from backend
+         * Load the list of video IDs from backend
+         * Called when starting or when all videos have been played
+         * On failure, retries after delay to maintain full refresh from backend
          */
-        // Check local cache first
-        if (this.videoCache[category] && this.videoCache[category].length > 0) {
-            return this.videoCache[category];
+        this.showLoading();
+
+        try {
+            // Fetch from backend
+            const videos = await this.fetchVideoIds();
+
+            if (videos && videos.length > 0) {
+                this.videoIds = videos;
+                
+                // Reset playback tracking
+                this.playedVideos.clear();
+                this.currentVideoIndex = 0;
+
+                // Start playing the first video
+                this.loadVideo();
+            } else {
+                // No videos returned - retry after delay
+                console.warn('No videos returned from backend, retrying...');
+                this.showError('No transmissions available');
+            }
+        } catch (error) {
+            console.error('Error loading video list:', error);
+            this.showError('Transmission feed offline');
+        } finally {
+            this.hideLoading();
         }
-        
-        // Fetch from backend
-        const videos = await this.fetchVideoIds(category);
-        
-        if (videos && videos.length > 0) {
-            return videos;
-        }
-        
-        // Fall back to hardcoded videos
-        console.warn(`Using fallback videos for ${category}`);
-        return this.fallbackVideos[category] || this.fallbackVideos.scenery;
     }
 
-    async loadVideo() {
+    hideLoading() {
         /**
-         * Load and display a video from the current category
+         * Hide the loading state in the UI
+         * This is a safe no-op if the loading element is not present.
          */
-        // Show loading state
-        this.showLoading();
-        
+        const loadingElement = document.getElementById('youtube-loading');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+    }
+    loadVideo() {
+        /**
+         * Load and display the current video
+         */
+        if (!this.videoIds || this.videoIds.length === 0) {
+            this.showError('No transmissions available');
+            return;
+        }
+
+        // Check if all videos have been played
+        if (this.playedVideos.size >= this.videoIds.length) {
+            console.log('All videos played, refetching from backend...');
+            this.loadVideoList();
+            return;
+        }
+
+        // Find next unplayed video
+        while (this.playedVideos.has(this.currentVideoIndex)) {
+            this.currentVideoIndex = (this.currentVideoIndex + 1) % this.videoIds.length;
+        }
+
+        const videoId = this.videoIds[this.currentVideoIndex];
+
+        console.log(`Loading video ${this.currentVideoIndex + 1}/${this.videoIds.length}: ${videoId}`);
+
+        // Create or update player
+        if (!this.player) {
+            this.createPlayer(videoId);
+            // Mark this video as played when we initiate playback in a new player
+            this.playedVideos.add(this.currentVideoIndex);
+        } else if (this.playerReady) {
+            // Load new video in existing player
+            this.player.loadVideoById(videoId);
+            // Mark this video as played when we successfully queue it in the existing player
+            this.playedVideos.add(this.currentVideoIndex);
+        } else {
+            // Player exists but is not ready; surface an error instead of silently skipping
+            this.showError('Unable to establish holonet transmission at this time');
+        }
+    }
+
+    createPlayer(videoId) {
+        /**
+         * Create YouTube player instance with event handlers
+         */
+        // Check if YouTube API is available
+        if (!window.YT || !window.YT.Player) {
+            console.error('YouTube IFrame API is not loaded');
+            this.showError('YouTube API unavailable');
+            return;
+        }
+
+        // Create iframe container
+        this.videoContainer.innerHTML = `
+            <div id="youtube-player"></div>
+        `;
+
         try {
-            // Get video IDs (from cache, API, or fallback)
-            const videoIds = await this.getVideoIds(this.currentCategory);
-            
-            if (!videoIds || videoIds.length === 0) {
-                this.showError('No transmissions available');
-                return;
-            }
-            
-            // Ensure index is within bounds
-            if (this.currentVideoIndex >= videoIds.length) {
-                this.currentVideoIndex = 0;
-            }
-            
-            const videoId = videoIds[this.currentVideoIndex];
-            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
-            
-            this.videoContainer.innerHTML = `
-                <iframe
-                    width="100%"
-                    height="100%"
-                    src="${embedUrl}"
-                    style="border: none;"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    class="youtube-iframe"
-                ></iframe>
-            `;
+            this.player = new YT.Player('youtube-player', {
+                width: '100%',
+                height: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    mute: 1,
+                    controls: 1,
+                    modestbranding: 1,
+                    rel: 0
+                },
+                events: {
+                    'onReady': (event) => {
+                        this.onPlayerReady(event);
+                    },
+                    'onStateChange': (event) => {
+                        this.onPlayerStateChange(event);
+                    },
+                    'onError': (event) => {
+                        this.onPlayerError(event);
+                    }
+                }
+            });
         } catch (error) {
-            console.error('Error loading video:', error);
-            this.showError('Transmission feed offline');
+            console.error('Error creating YouTube player:', error);
+            this.showError('Failed to initialize player');
+        }
+    }
+
+    onPlayerReady(event) {
+        /**
+         * Called when player is ready
+         */
+        console.log('YouTube player ready');
+        this.playerReady = true;
+        event.target.playVideo();
+    }
+
+    onPlayerStateChange(event) {
+        /**
+         * Called when player state changes
+         * YT.PlayerState: ENDED = 0, PLAYING = 1, PAUSED = 2, BUFFERING = 3, CUED = 5
+         */
+        if (event.data === YT.PlayerState.ENDED) {
+            console.log('Video ended, loading next video...');
+            // Let loadVideo handle selecting the next video
+            this.loadVideo();
+        }
+    }
+
+    onPlayerError(event) {
+        /**
+         * Called when player encounters an error
+         * Error codes: 2 = invalid param, 5 = HTML5 error, 100 = not found, 101/150 = not embeddable
+         */
+        console.error('YouTube player error:', event.data);
+
+        // Try next video
+        this.currentVideoIndex = (this.currentVideoIndex + 1) % this.videoIds.length;
+
+        // If we've tried all videos, show error
+        if (this.playedVideos.size >= this.videoIds.length) {
+            this.showError('Unable to play videos');
+        } else {
+            this.loadVideo();
         }
     }
 
@@ -160,6 +317,7 @@ class YouTubeFeed {
     showError(message) {
         /**
          * Display error state with graceful message
+         * Retries by refetching from backend after delay
          */
         this.videoContainer.innerHTML = `
             <div class="youtube-placeholder">
@@ -168,49 +326,25 @@ class YouTubeFeed {
                 <p class="small" style="margin-top: 1rem;">Attempting to restore connection...</p>
             </div>
         `;
-        
+
+        // Clear any existing recovery timeout to prevent multiple queued recoveries
+        if (this.recoveryTimeout) {
+            clearTimeout(this.recoveryTimeout);
+        }
+
         // Retry with fallback after delay
-        setTimeout(() => {
-            this.videoCache[this.currentCategory] = this.fallbackVideos[this.currentCategory];
-            this.loadVideo();
-        }, 3000);
-    }
-
-    cycleVideo() {
-        /**
-         * Cycle to the next video in the current category
-         */
-        const videoIds = this.videoCache[this.currentCategory] || this.fallbackVideos[this.currentCategory];
-        this.currentVideoIndex = (this.currentVideoIndex + 1) % videoIds.length;
-        this.loadVideo();
-    }
-
-    startVideoRotation() {
-        /**
-         * Start automatic video rotation every VIDEO_ROTATION_INTERVAL_MS
-         * Clears any existing rotation timer before starting
-         */
-        // Clear existing timer if any
-        if (this.rotationTimer) {
-            clearInterval(this.rotationTimer);
-        }
-        
-        // Start new rotation timer
-        this.rotationTimer = setInterval(() => {
-            this.cycleVideo();
-        }, VIDEO_ROTATION_INTERVAL_MS);
-    }
-
-    async refreshCategory(category) {
-        /**
-         * Force refresh video IDs for a specific category
-         * Clears local cache and fetches fresh from backend
-         */
-        delete this.videoCache[category];
-        if (category === this.currentCategory) {
+        this.recoveryTimeout = setTimeout(() => {
+            this.videoIds = this.fallbackVideos;
+            this.playedVideos.clear();
             this.currentVideoIndex = 0;
-            await this.loadVideo();
-        }
+            this.player = null;
+            this.playerReady = false;
+            this.loadVideo();
+            this.recoveryTimeout = null;
+        // Retry by refetching from backend after delay
+        setTimeout(() => {
+            this.loadVideoList();
+        }, 3000);
     }
 }
 
