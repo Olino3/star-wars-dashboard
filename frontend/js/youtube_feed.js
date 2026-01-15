@@ -2,7 +2,8 @@
  * YouTube Video Feed Module
  * Displays Star Wars scenery videos continuously
  * Fetches video IDs from secure Flask backend proxy
- * Only refetches when all videos have been played
+ * Refetches from backend when all videos have been played or on error
+ * No fallback videos - always attempts to refresh from backend
  */
 
 class YouTubeFeed {
@@ -36,18 +37,64 @@ class YouTubeFeed {
         /**
          * Load YouTube IFrame API script
          */
-        if (!window.YT) {
+        // Ensure a shared callback queue exists
+        if (!window._ytApiReadyCallbacks) {
+            window._ytApiReadyCallbacks = [];
+        }
+
+        const instanceCallback = () => {
+            this.onAPIReady();
+        };
+
+        // If the API is already fully ready, call immediately
+        if (window.YT && window.YT.Player) {
+            instanceCallback();
+            return;
+        }
+
+        // Otherwise, enqueue this instance's callback to be called when the API is ready
+        window._ytApiReadyCallbacks.push(instanceCallback);
+
+        // If the script tag is already present, assume it is loading and just rely on the global callback
+        const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+
+        if (!existingScript) {
             const tag = document.createElement('script');
             tag.src = 'https://www.youtube.com/iframe_api';
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
 
-            // Set up callback for when API is ready
+        // Set up (or extend) the global callback for when the API is ready
+        if (!window.onYouTubeIframeAPIReady) {
             window.onYouTubeIframeAPIReady = () => {
-                this.onAPIReady();
+                const callbacks = window._ytApiReadyCallbacks || [];
+                while (callbacks.length) {
+                    const cb = callbacks.shift();
+                    try {
+                        cb();
+                    } catch (e) {
+                        console.error('Error in YouTube IFrame API ready callback:', e);
+                    }
+                }
             };
-        } else if (window.YT && window.YT.Player) {
-            this.onAPIReady();
+        } else {
+            const previousCallback = window.onYouTubeIframeAPIReady;
+            window.onYouTubeIframeAPIReady = () => {
+                try {
+                    previousCallback();
+                } finally {
+                    const callbacks = window._ytApiReadyCallbacks || [];
+                    while (callbacks.length) {
+                        const cb = callbacks.shift();
+                        try {
+                            cb();
+                        } catch (e) {
+                            console.error('Error in YouTube IFrame API ready callback:', e);
+                        }
+                    }
+                }
+            };
         }
     }
 
@@ -88,7 +135,8 @@ class YouTubeFeed {
     async loadVideoList() {
         /**
          * Load the list of video IDs from backend
-         * Only called when starting or when all videos have been played
+         * Called when starting or when all videos have been played
+         * On failure, retries after delay to maintain full refresh from backend
          */
         this.showLoading();
 
@@ -98,24 +146,36 @@ class YouTubeFeed {
 
             if (videos && videos.length > 0) {
                 this.videoIds = videos;
+                
+                // Reset playback tracking
+                this.playedVideos.clear();
+                this.currentVideoIndex = 0;
+
+                // Start playing the first video
+                this.loadVideo();
             } else {
-                // Fall back to hardcoded videos
-                console.warn('Using fallback scenery videos');
-                this.videoIds = this.fallbackVideos;
+                // No videos returned - retry after delay
+                console.warn('No videos returned from backend, retrying...');
+                this.showError('No transmissions available');
             }
-
-            // Reset playback tracking
-            this.playedVideos.clear();
-            this.currentVideoIndex = 0;
-
-            // Start playing the first video
-            this.loadVideo();
         } catch (error) {
             console.error('Error loading video list:', error);
             this.showError('Transmission feed offline');
+        } finally {
+            this.hideLoading();
         }
     }
 
+    hideLoading() {
+        /**
+         * Hide the loading state in the UI
+         * This is a safe no-op if the loading element is not present.
+         */
+        const loadingElement = document.getElementById('youtube-loading');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+    }
     loadVideo() {
         /**
          * Load and display the current video
@@ -139,17 +199,21 @@ class YouTubeFeed {
 
         const videoId = this.videoIds[this.currentVideoIndex];
 
-        // Mark this video as played
-        this.playedVideos.add(this.currentVideoIndex);
-
         console.log(`Loading video ${this.currentVideoIndex + 1}/${this.videoIds.length}: ${videoId}`);
 
         // Create or update player
         if (!this.player) {
             this.createPlayer(videoId);
+            // Mark this video as played when we initiate playback in a new player
+            this.playedVideos.add(this.currentVideoIndex);
         } else if (this.playerReady) {
             // Load new video in existing player
             this.player.loadVideoById(videoId);
+            // Mark this video as played when we successfully queue it in the existing player
+            this.playedVideos.add(this.currentVideoIndex);
+        } else {
+            // Player exists but is not ready; surface an error instead of silently skipping
+            this.showError('Unable to establish holonet transmission at this time');
         }
     }
 
@@ -157,34 +221,46 @@ class YouTubeFeed {
         /**
          * Create YouTube player instance with event handlers
          */
+        // Check if YouTube API is available
+        if (!window.YT || !window.YT.Player) {
+            console.error('YouTube IFrame API is not loaded');
+            this.showError('YouTube API unavailable');
+            return;
+        }
+
         // Create iframe container
         this.videoContainer.innerHTML = `
             <div id="youtube-player"></div>
         `;
 
-        this.player = new YT.Player('youtube-player', {
-            width: '100%',
-            height: '100%',
-            videoId: videoId,
-            playerVars: {
-                autoplay: 1,
-                mute: 1,
-                controls: 1,
-                modestbranding: 1,
-                rel: 0
-            },
-            events: {
-                'onReady': (event) => {
-                    this.onPlayerReady(event);
+        try {
+            this.player = new YT.Player('youtube-player', {
+                width: '100%',
+                height: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    mute: 1,
+                    controls: 1,
+                    modestbranding: 1,
+                    rel: 0
                 },
-                'onStateChange': (event) => {
-                    this.onPlayerStateChange(event);
-                },
-                'onError': (event) => {
-                    this.onPlayerError(event);
+                events: {
+                    'onReady': (event) => {
+                        this.onPlayerReady(event);
+                    },
+                    'onStateChange': (event) => {
+                        this.onPlayerStateChange(event);
+                    },
+                    'onError': (event) => {
+                        this.onPlayerError(event);
+                    }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('Error creating YouTube player:', error);
+            this.showError('Failed to initialize player');
+        }
     }
 
     onPlayerReady(event) {
@@ -203,8 +279,7 @@ class YouTubeFeed {
          */
         if (event.data === YT.PlayerState.ENDED) {
             console.log('Video ended, loading next video...');
-            // Move to next video
-            this.currentVideoIndex = (this.currentVideoIndex + 1) % this.videoIds.length;
+            // Let loadVideo handle selecting the next video
             this.loadVideo();
         }
     }
@@ -242,6 +317,7 @@ class YouTubeFeed {
     showError(message) {
         /**
          * Display error state with graceful message
+         * Retries by refetching from backend after delay
          */
         this.videoContainer.innerHTML = `
             <div class="youtube-placeholder">
@@ -265,6 +341,9 @@ class YouTubeFeed {
             this.playerReady = false;
             this.loadVideo();
             this.recoveryTimeout = null;
+        // Retry by refetching from backend after delay
+        setTimeout(() => {
+            this.loadVideoList();
         }, 3000);
     }
 }
