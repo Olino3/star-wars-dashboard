@@ -110,9 +110,21 @@ class YouTubeFeed {
         } catch (error) {
             console.error('Error loading video list:', error);
             this.showError('Transmission feed offline');
+        } finally {
+            this.hideLoading();
         }
     }
 
+    hideLoading() {
+        /**
+         * Hide the loading state in the UI
+         * This is a safe no-op if the loading element is not present.
+         */
+        const loadingElement = document.getElementById('youtube-loading');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+    }
     loadVideo() {
         /**
          * Load and display the current video
