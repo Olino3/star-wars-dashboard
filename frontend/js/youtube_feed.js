@@ -2,7 +2,8 @@
  * YouTube Video Feed Module
  * Displays Star Wars scenery videos continuously
  * Fetches video IDs from secure Flask backend proxy
- * Only refetches when all videos have been played
+ * Refetches from backend when all videos have been played or on error
+ * No fallback videos - always attempts to refresh from backend
  */
 
 class YouTubeFeed {
@@ -16,10 +17,6 @@ class YouTubeFeed {
         // Track video IDs and playback
         this.videoIds = [];
         this.playedVideos = new Set();
-
-        // Fallback video IDs in case API fails
-        // Verified working embeddable Star Wars scenery videos
-        this.fallbackVideos = ['1k59gXTWf-A', 'fCUlgFKGF0c', 'SjC5bezSaWU'];
 
         this.init();
     }
@@ -131,7 +128,8 @@ class YouTubeFeed {
     async loadVideoList() {
         /**
          * Load the list of video IDs from backend
-         * Only called when starting or when all videos have been played
+         * Called when starting or when all videos have been played
+         * On failure, retries after delay to maintain full refresh from backend
          */
         this.showLoading();
 
@@ -141,18 +139,18 @@ class YouTubeFeed {
 
             if (videos && videos.length > 0) {
                 this.videoIds = videos;
+                
+                // Reset playback tracking
+                this.playedVideos.clear();
+                this.currentVideoIndex = 0;
+
+                // Start playing the first video
+                this.loadVideo();
             } else {
-                // Fall back to hardcoded videos
-                console.warn('Using fallback scenery videos');
-                this.videoIds = this.fallbackVideos;
+                // No videos returned - retry after delay
+                console.warn('No videos returned from backend, retrying...');
+                this.showError('No transmissions available');
             }
-
-            // Reset playback tracking
-            this.playedVideos.clear();
-            this.currentVideoIndex = 0;
-
-            // Start playing the first video
-            this.loadVideo();
         } catch (error) {
             console.error('Error loading video list:', error);
             this.showError('Transmission feed offline');
@@ -312,6 +310,7 @@ class YouTubeFeed {
     showError(message) {
         /**
          * Display error state with graceful message
+         * Retries by refetching from backend after delay
          */
         this.videoContainer.innerHTML = `
             <div class="youtube-placeholder">
@@ -321,14 +320,9 @@ class YouTubeFeed {
             </div>
         `;
 
-        // Retry with fallback after delay
+        // Retry by refetching from backend after delay
         setTimeout(() => {
-            this.videoIds = this.fallbackVideos;
-            this.playedVideos.clear();
-            this.currentVideoIndex = 0;
-            this.player = null;
-            this.playerReady = false;
-            this.loadVideo();
+            this.loadVideoList();
         }, 3000);
     }
 }
