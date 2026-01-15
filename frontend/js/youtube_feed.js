@@ -21,6 +21,9 @@ class YouTubeFeed {
         // Verified working embeddable Star Wars scenery videos
         this.fallbackVideos = ['1k59gXTWf-A', 'fCUlgFKGF0c', 'SjC5bezSaWU'];
 
+        // Track error recovery timeout to prevent multiple queued recoveries
+        this.recoveryTimeout = null;
+
         this.init();
     }
 
@@ -248,14 +251,20 @@ class YouTubeFeed {
             </div>
         `;
 
+        // Clear any existing recovery timeout to prevent multiple queued recoveries
+        if (this.recoveryTimeout) {
+            clearTimeout(this.recoveryTimeout);
+        }
+
         // Retry with fallback after delay
-        setTimeout(() => {
+        this.recoveryTimeout = setTimeout(() => {
             this.videoIds = this.fallbackVideos;
             this.playedVideos.clear();
             this.currentVideoIndex = 0;
             this.player = null;
             this.playerReady = false;
             this.loadVideo();
+            this.recoveryTimeout = null;
         }, 3000);
     }
 }
