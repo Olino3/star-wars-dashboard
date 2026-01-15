@@ -33,18 +33,64 @@ class YouTubeFeed {
         /**
          * Load YouTube IFrame API script
          */
-        if (!window.YT) {
+        // Ensure a shared callback queue exists
+        if (!window._ytApiReadyCallbacks) {
+            window._ytApiReadyCallbacks = [];
+        }
+
+        const instanceCallback = () => {
+            this.onAPIReady();
+        };
+
+        // If the API is already fully ready, call immediately
+        if (window.YT && window.YT.Player) {
+            instanceCallback();
+            return;
+        }
+
+        // Otherwise, enqueue this instance's callback to be called when the API is ready
+        window._ytApiReadyCallbacks.push(instanceCallback);
+
+        // If the script tag is already present, assume it is loading and just rely on the global callback
+        const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+
+        if (!existingScript) {
             const tag = document.createElement('script');
             tag.src = 'https://www.youtube.com/iframe_api';
             const firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
 
-            // Set up callback for when API is ready
+        // Set up (or extend) the global callback for when the API is ready
+        if (!window.onYouTubeIframeAPIReady) {
             window.onYouTubeIframeAPIReady = () => {
-                this.onAPIReady();
+                const callbacks = window._ytApiReadyCallbacks || [];
+                while (callbacks.length) {
+                    const cb = callbacks.shift();
+                    try {
+                        cb();
+                    } catch (e) {
+                        console.error('Error in YouTube IFrame API ready callback:', e);
+                    }
+                }
             };
-        } else if (window.YT && window.YT.Player) {
-            this.onAPIReady();
+        } else {
+            const previousCallback = window.onYouTubeIframeAPIReady;
+            window.onYouTubeIframeAPIReady = () => {
+                try {
+                    previousCallback();
+                } finally {
+                    const callbacks = window._ytApiReadyCallbacks || [];
+                    while (callbacks.length) {
+                        const cb = callbacks.shift();
+                        try {
+                            cb();
+                        } catch (e) {
+                            console.error('Error in YouTube IFrame API ready callback:', e);
+                        }
+                    }
+                }
+            };
         }
     }
 
