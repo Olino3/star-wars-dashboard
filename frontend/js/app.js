@@ -186,8 +186,8 @@ class KuatSystemsDashboard {
                 document.getElementById('wind-speed').textContent = `${weather.wind_speed} mph`;
                 document.getElementById('visibility').textContent = `${weather.visibility} mi`;
 
-                // Update weather animation based on description
-                this.updateWeatherAnimation(weather.description);
+                // Update weather animation based on description and day/night
+                this.updateWeatherAnimation(weather.description, weather.is_day);
 
                 const statusBadge = document.getElementById('atmospheric-status');
                 statusBadge.textContent = weather.atmospheric_status;
@@ -206,7 +206,7 @@ class KuatSystemsDashboard {
         }
     }
 
-    updateWeatherAnimation(description) {
+    updateWeatherAnimation(description, isDay = true) {
         const weatherAnimation = document.getElementById('weather-animation');
         if (!weatherAnimation) return;
 
@@ -228,6 +228,7 @@ class KuatSystemsDashboard {
         }
 
         weatherAnimation.setAttribute('data-weather', weatherType);
+        weatherAnimation.setAttribute('data-time', isDay ? 'day' : 'night');
     }
 
     async updateNews() {
