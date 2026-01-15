@@ -194,17 +194,21 @@ class YouTubeFeed {
 
         const videoId = this.videoIds[this.currentVideoIndex];
 
-        // Mark this video as played
-        this.playedVideos.add(this.currentVideoIndex);
-
         console.log(`Loading video ${this.currentVideoIndex + 1}/${this.videoIds.length}: ${videoId}`);
 
         // Create or update player
         if (!this.player) {
             this.createPlayer(videoId);
+            // Mark this video as played when we initiate playback in a new player
+            this.playedVideos.add(this.currentVideoIndex);
         } else if (this.playerReady) {
             // Load new video in existing player
             this.player.loadVideoById(videoId);
+            // Mark this video as played when we successfully queue it in the existing player
+            this.playedVideos.add(this.currentVideoIndex);
+        } else {
+            // Player exists but is not ready; surface an error instead of silently skipping
+            this.showError('Unable to establish holonet transmission at this time');
         }
     }
 
