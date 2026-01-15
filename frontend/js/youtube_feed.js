@@ -212,8 +212,7 @@ class YouTubeFeed {
          */
         if (event.data === YT.PlayerState.ENDED) {
             console.log('Video ended, loading next video...');
-            // Move to next video
-            this.currentVideoIndex = (this.currentVideoIndex + 1) % this.videoIds.length;
+            // Let loadVideo handle selecting the next video
             this.loadVideo();
         }
     }
