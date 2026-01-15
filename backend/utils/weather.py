@@ -40,6 +40,15 @@ def parse_weather_data(data, display_location=None):
     """Parse OpenWeatherMap API response into themed format (Imperial units)"""
     # Use display_location if provided, otherwise fall back to API response
     location_name = display_location if display_location else data.get("name", "Unknown Sector")
+
+    # Get current time and sunrise/sunset times
+    current_time = datetime.now().timestamp()
+    sunrise = data.get("sys", {}).get("sunrise", 0)
+    sunset = data.get("sys", {}).get("sunset", 0)
+
+    # Determine if it's daytime (between sunrise and sunset, inclusive)
+    is_day = sunrise <= current_time <= sunset if sunrise and sunset else True
+
     return {
         "location": location_name,
         "temperature": round(data["main"]["temp"]),
@@ -50,7 +59,10 @@ def parse_weather_data(data, display_location=None):
         "icon": data["weather"][0]["icon"],
         "wind_speed": round(data["wind"]["speed"], 1),  # Already in mph with imperial units
         "visibility": round(data.get("visibility", 16093) / 1609.34, 1),  # Convert meters to miles
-        "atmospheric_status": get_atmospheric_status(data)
+        "atmospheric_status": get_atmospheric_status(data),
+        "is_day": is_day,
+        "sunrise": sunrise,
+        "sunset": sunset
     }
 
 
@@ -80,6 +92,10 @@ def get_atmospheric_status(data):
 
 def get_mock_weather():
     """Return mock weather data for demo purposes (Imperial units)"""
+    # Determine if it's daytime based on current hour (6 AM - 6 PM)
+    current_hour = datetime.now().hour
+    is_day = 6 <= current_hour < 18
+
     return {
         "location": "Coruscant Sector",
         "temperature": 72,
@@ -87,10 +103,13 @@ def get_mock_weather():
         "humidity": 65,
         "pressure": 1013,
         "description": "Partly Cloudy",
-        "icon": "02d",
+        "icon": "02d" if is_day else "02n",
         "wind_speed": 9.6,
         "visibility": 6.2,
-        "atmospheric_status": "ATMOSPHERIC CLARITY OPTIMAL"
+        "atmospheric_status": "ATMOSPHERIC CLARITY OPTIMAL",
+        "is_day": is_day,
+        "sunrise": int((datetime.now().replace(hour=6, minute=0, second=0)).timestamp()),
+        "sunset": int((datetime.now().replace(hour=18, minute=0, second=0)).timestamp())
     }
 
 
