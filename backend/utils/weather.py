@@ -46,8 +46,8 @@ def parse_weather_data(data, display_location=None):
     sunrise = data.get("sys", {}).get("sunrise", 0)
     sunset = data.get("sys", {}).get("sunset", 0)
 
-    # Determine if it's daytime (between sunrise and sunset)
-    is_day = sunrise < current_time < sunset if sunrise and sunset else True
+    # Determine if it's daytime (between sunrise and sunset, inclusive)
+    is_day = sunrise <= current_time <= sunset if sunrise and sunset else True
 
     return {
         "location": location_name,
