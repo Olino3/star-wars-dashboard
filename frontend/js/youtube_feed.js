@@ -216,34 +216,46 @@ class YouTubeFeed {
         /**
          * Create YouTube player instance with event handlers
          */
+        // Check if YouTube API is available
+        if (!window.YT || !window.YT.Player) {
+            console.error('YouTube IFrame API is not loaded');
+            this.showError('YouTube API unavailable');
+            return;
+        }
+
         // Create iframe container
         this.videoContainer.innerHTML = `
             <div id="youtube-player"></div>
         `;
 
-        this.player = new YT.Player('youtube-player', {
-            width: '100%',
-            height: '100%',
-            videoId: videoId,
-            playerVars: {
-                autoplay: 1,
-                mute: 1,
-                controls: 1,
-                modestbranding: 1,
-                rel: 0
-            },
-            events: {
-                'onReady': (event) => {
-                    this.onPlayerReady(event);
+        try {
+            this.player = new YT.Player('youtube-player', {
+                width: '100%',
+                height: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    mute: 1,
+                    controls: 1,
+                    modestbranding: 1,
+                    rel: 0
                 },
-                'onStateChange': (event) => {
-                    this.onPlayerStateChange(event);
-                },
-                'onError': (event) => {
-                    this.onPlayerError(event);
+                events: {
+                    'onReady': (event) => {
+                        this.onPlayerReady(event);
+                    },
+                    'onStateChange': (event) => {
+                        this.onPlayerStateChange(event);
+                    },
+                    'onError': (event) => {
+                        this.onPlayerError(event);
+                    }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('Error creating YouTube player:', error);
+            this.showError('Failed to initialize player');
+        }
     }
 
     onPlayerReady(event) {
