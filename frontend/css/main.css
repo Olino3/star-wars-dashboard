@@ -1006,25 +1006,85 @@ html, body {
 }
 
 /* ============================================
-   MISSION BRIEFING
+   GALACTIC ARCHIVES
    ============================================ */
-.mission-text {
-    line-height: 1.6;
-    color: var(--text-secondary);
+.archives-panel {
+    display: flex;
+    flex-direction: column;
 }
 
-.mission-text p {
-    margin-bottom: var(--spacing-sm);
+.archives-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    transition: opacity 0.3s ease;
 }
 
-.mission-text strong {
+.archives-content.archives-fade-out {
+    opacity: 0;
+}
+
+.archives-content.archives-fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.archives-category-badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: rgba(0, 212, 255, 0.15);
+    border: 1px solid var(--imperial-blue);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    color: var(--imperial-blue);
+    text-shadow: 0 0 8px var(--imperial-blue-glow);
+}
+
+.archives-name {
+    font-size: 1.2rem;
+    font-weight: bold;
     color: var(--text-primary);
+    text-shadow: 0 0 6px rgba(224, 224, 224, 0.3);
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--panel-border);
+    margin-bottom: var(--spacing-xs);
 }
 
-.divider {
-    border: none;
-    border-top: 1px solid var(--panel-border);
-    margin: var(--spacing-md) 0;
+.archives-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.archives-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    border-left: 2px solid var(--panel-border);
+}
+
+.archives-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.archives-value {
+    font-size: 0.85rem;
+    color: var(--imperial-green);
+    text-shadow: 0 0 6px var(--imperial-green-glow);
+    font-weight: bold;
+    text-align: right;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .small {

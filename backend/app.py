@@ -12,6 +12,7 @@ from utils.weather import get_weather_data, get_galactic_date
 from utils.subway import get_subway_data
 from utils.youtini import get_youtini_articles
 from utils.youtube import get_youtube_videos, get_all_categories
+from utils.swapi import get_archives_entry
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
@@ -94,6 +95,19 @@ def api_subway():
     try:
         subway = get_subway_data(SUBWAY_CITY, None, SUBWAY_STATION_ID)
         return jsonify({"success": True, "data": subway})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/archives')
+def api_archives():
+    """
+    Galactic Archives - Random Star Wars data entry
+    Fetches characters, planets, and starships from SWAPI
+    """
+    try:
+        entry = get_archives_entry()
+        return jsonify({"success": True, "data": entry})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
