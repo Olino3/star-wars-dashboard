@@ -341,10 +341,11 @@ class YouTubeFeed {
             this.playerReady = false;
             this.loadVideo();
             this.recoveryTimeout = null;
-        // Retry by refetching from backend after delay
-        setTimeout(() => {
-            this.loadVideoList();
-        }, 3000);
+            // Retry by refetching from backend after delay
+            setTimeout(() => {
+                this.loadVideoList();
+            }, 3000);
+        }, 10000);
     }
 }
 

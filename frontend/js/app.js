@@ -27,7 +27,11 @@ class KuatSystemsDashboard {
         this.setDashboardName();
 
         // Initialize YouTube feed
-        this.youtubeFeed = new YouTubeFeed();
+        try {
+            this.youtubeFeed = new YouTubeFeed();
+        } catch (error) {
+            console.error('Failed to initialize YouTube feed:', error);
+        }
 
         // Initial data fetch
         this.updateChronometer();
