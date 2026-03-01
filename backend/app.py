@@ -53,6 +53,8 @@ def api_weather():
     """Get atmospheric data (weather)"""
     try:
         weather = get_weather_data(WEATHER_API_KEY, WEATHER_LOCATION)
+        if weather.get("error"):
+            return jsonify({"success": False, "error": weather["message"]}), 503
         return jsonify({"success": True, "data": weather})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -76,6 +78,8 @@ def api_news():
     """
     try:
         news_items = get_youtini_articles(limit=5)
+        if not news_items:
+            return jsonify({"success": False, "error": "Unable to fetch news. Source may be unavailable."}), 503
         return jsonify({"success": True, "data": news_items})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

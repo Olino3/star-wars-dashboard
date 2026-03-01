@@ -204,9 +204,34 @@ class KuatSystemsDashboard {
                 } else {
                     statusBadge.className = 'status-badge nominal';
                 }
+            } else {
+                // Display error state
+                const errorMsg = data.error || 'Weather data unavailable';
+                document.getElementById('weather-location').textContent = 'DATA UNAVAILABLE';
+                document.getElementById('weather-temp').textContent = '--°F';
+                document.getElementById('weather-desc').textContent = errorMsg;
+                document.getElementById('feels-like').textContent = '--';
+                document.getElementById('humidity').textContent = '--';
+                document.getElementById('wind-speed').textContent = '--';
+                document.getElementById('visibility').textContent = '--';
+
+                const statusBadge = document.getElementById('atmospheric-status');
+                statusBadge.textContent = 'SENSOR OFFLINE';
+                statusBadge.className = 'status-badge degraded';
             }
         } catch (error) {
             console.error('Weather update error:', error);
+            document.getElementById('weather-location').textContent = 'DATA UNAVAILABLE';
+            document.getElementById('weather-temp').textContent = '--°F';
+            document.getElementById('weather-desc').textContent = 'Connection error';
+            document.getElementById('feels-like').textContent = '--';
+            document.getElementById('humidity').textContent = '--';
+            document.getElementById('wind-speed').textContent = '--';
+            document.getElementById('visibility').textContent = '--';
+
+            const statusBadge = document.getElementById('atmospheric-status');
+            statusBadge.textContent = 'SENSOR OFFLINE';
+            statusBadge.className = 'status-badge degraded';
         }
     }
 
@@ -247,11 +272,11 @@ class KuatSystemsDashboard {
                 data.data.forEach(item => {
                     const newsItem = document.createElement('div');
                     newsItem.className = 'news-item fade-in';
-                    
+
                     // Create title div
                     const titleDiv = document.createElement('div');
                     titleDiv.className = 'news-title';
-                    
+
                     // Create title with optional link using DOM APIs to prevent XSS
                     if (item.url) {
                         const link = document.createElement('a');
@@ -264,21 +289,21 @@ class KuatSystemsDashboard {
                     } else {
                         titleDiv.textContent = item.title;
                     }
-                    
+
                     // Create meta div
                     const metaDiv = document.createElement('div');
                     metaDiv.className = 'news-meta';
-                    
+
                     // Create source span
                     const sourceSpan = document.createElement('span');
                     sourceSpan.className = 'news-source';
                     sourceSpan.textContent = item.source;
-                    
+
                     // Create time span
                     const timeSpan = document.createElement('span');
                     timeSpan.className = 'news-time';
                     timeSpan.textContent = item.time;
-                    
+
                     // Assemble the structure
                     metaDiv.appendChild(sourceSpan);
                     metaDiv.appendChild(timeSpan);
@@ -286,9 +311,36 @@ class KuatSystemsDashboard {
                     newsItem.appendChild(metaDiv);
                     newsFeed.appendChild(newsItem);
                 });
+            } else {
+                // Display error state
+                const newsFeed = document.getElementById('news-feed');
+                const errorMsg = data.error || 'No news data available';
+                newsFeed.innerHTML = '';
+                const errorItem = document.createElement('div');
+                errorItem.className = 'news-item';
+                errorItem.innerHTML = `
+                    <div class="news-title">HoloNet Feed Unavailable</div>
+                    <div class="news-meta">
+                        <span class="news-source">Error</span>
+                        <span class="news-time">${errorMsg}</span>
+                    </div>
+                `;
+                newsFeed.appendChild(errorItem);
             }
         } catch (error) {
             console.error('News update error:', error);
+            const newsFeed = document.getElementById('news-feed');
+            newsFeed.innerHTML = '';
+            const errorItem = document.createElement('div');
+            errorItem.className = 'news-item';
+            errorItem.innerHTML = `
+                <div class="news-title">HoloNet Feed Unavailable</div>
+                <div class="news-meta">
+                    <span class="news-source">Error</span>
+                    <span class="news-time">Connection error</span>
+                </div>
+            `;
+            newsFeed.appendChild(errorItem);
         }
     }
 

@@ -11,13 +11,15 @@ from urllib.parse import quote
 def get_weather_data(api_key=None, location="London"):
     """
     Fetch weather data from OpenWeatherMap API
-    Falls back to mock data if API key not provided
+    Returns error information if API key not provided or request fails.
 
     To get a free API key: https://openweathermap.org/api
     """
     if not api_key or api_key == "YOUR_API_KEY_HERE":
-        # Return mock data for development/demo
-        return get_mock_weather()
+        return {
+            "error": True,
+            "message": "Weather API key not configured. Set OPENWEATHER_API_KEY in .env file."
+        }
 
     try:
         # URL-encode the location to handle spaces and special characters
@@ -30,10 +32,16 @@ def get_weather_data(api_key=None, location="London"):
             # Pass original location name for display (API may return abbreviated name)
             return parse_weather_data(data, location)
         else:
-            return get_mock_weather()
+            return {
+                "error": True,
+                "message": f"Weather API returned status {response.status_code}"
+            }
     except Exception as e:
         print(f"Weather API error: {e}")
-        return get_mock_weather()
+        return {
+            "error": True,
+            "message": f"Weather API error: {e}"
+        }
 
 
 def parse_weather_data(data, display_location=None):
