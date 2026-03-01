@@ -14,6 +14,7 @@ class KuatSystemsDashboard {
         this.weatherInterval = 300000;   // 5 minutes
         this.newsInterval = 600000;      // 10 minutes
         this.subwayInterval = 60000;     // 1 minute
+        this.archivesInterval = 30000;   // 30 seconds
 
         // Initialize components
         this.youtubeFeed = null;
@@ -39,6 +40,7 @@ class KuatSystemsDashboard {
         this.updateWeather();
         this.updateNews();
         this.updateSubway();
+        this.updateArchives();
 
         // Set up periodic updates
         setInterval(() => this.updateChronometer(), this.chronoInterval);
@@ -46,6 +48,7 @@ class KuatSystemsDashboard {
         setInterval(() => this.updateWeather(), this.weatherInterval);
         setInterval(() => this.updateNews(), this.newsInterval);
         setInterval(() => this.updateSubway(), this.subwayInterval);
+        setInterval(() => this.updateArchives(), this.archivesInterval);
 
         console.log('Dashboard initialized successfully');
     }
@@ -359,6 +362,65 @@ class KuatSystemsDashboard {
             }
         } catch (error) {
             console.error('Subway update error:', error);
+        }
+    }
+
+    async updateArchives() {
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/api/archives`);
+            const data = await response.json();
+
+            if (data.success) {
+                const entry = data.data;
+                const content = document.getElementById('archives-content');
+
+                // Add fade-out class, then update and fade-in
+                content.classList.add('archives-fade-out');
+
+                setTimeout(() => {
+                    // Update category badge
+                    const categoryEl = document.getElementById('archives-category');
+                    categoryEl.textContent = entry.category;
+
+                    // Update name
+                    const nameEl = document.getElementById('archives-name');
+                    nameEl.textContent = entry.name;
+
+                    // Update details
+                    const detailsEl = document.getElementById('archives-details');
+                    detailsEl.innerHTML = '';
+                    entry.details.forEach(detail => {
+                        const row = document.createElement('div');
+                        row.className = 'archives-detail-row';
+
+                        const label = document.createElement('span');
+                        label.className = 'archives-label';
+                        label.textContent = detail.label;
+
+                        const value = document.createElement('span');
+                        value.className = 'archives-value';
+                        value.textContent = detail.value;
+
+                        row.appendChild(label);
+                        row.appendChild(value);
+                        detailsEl.appendChild(row);
+                    });
+
+                    // Update classification badge
+                    const classEl = document.getElementById('archives-classification');
+                    classEl.textContent = entry.classification.level;
+                    classEl.className = `status-badge ${entry.classification.status}`;
+
+                    // Fade back in
+                    content.classList.remove('archives-fade-out');
+                    content.classList.add('archives-fade-in');
+                    setTimeout(() => {
+                        content.classList.remove('archives-fade-in');
+                    }, 500);
+                }, 300);
+            }
+        } catch (error) {
+            console.error('Archives update error:', error);
         }
     }
 
