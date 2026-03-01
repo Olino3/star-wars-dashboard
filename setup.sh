@@ -167,6 +167,7 @@ $CHROMIUM_BIN \
     --disable-session-crashed-bubble \
     --disable-features=TranslateUI \
     --disable-translate \
+    --password-store=basic \
     --incognito \
     http://localhost:5000
 EOF
